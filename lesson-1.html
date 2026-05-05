@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lesson 1: The Three Branches of Government — School Civics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #15225a;
+    --navy-deep: #0f1842;
+    --cream: #fdf6e3;
+    --cream-2: #f7e9c4;
+    --parchment: #fdf6e3;
+    --red: #c8262e;
+    --red-bright: #e94f4f;
+    --red-deep: #a81e25;
+    --blue: #2952b3;
+    --blue-deep: #1d3a8c;
+    --gold: #e6b94d;
+    --gold-deep: #b08727;
+    --teal: #2bb9a8;
+    --green: #5cc46a;
+    --pink: #ff7eb3;
+    --ink: #1a1d36;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, .display { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: -0.01em; }
+  .serif { font-family: 'Playfair Display', Georgia, serif; }
+  a { color: inherit; text-decoration: none; }
+
+  .ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+
+  /* ---------- BUNTING ---------- */
+  .bunting {
+    display: flex; justify-content: center; gap: 4px;
+    padding: 6px 0 0;
+    background: var(--navy);
+    border-bottom: 3px solid var(--gold);
+    overflow: hidden;
+  }
+  .bunting-flag { width: 26px; height: 32px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+  .bunting-flag.r { background: var(--red); }
+  .bunting-flag.w { background: var(--cream); }
+  .bunting-flag.b { background: var(--blue); }
+  .bunting-flag.g { background: var(--gold); }
+
+  /* ---------- Nav (slim) ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--cream);
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 2px 0 var(--navy);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 12px 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Playfair Display', serif; font-weight: 900; font-size: 20px;
+    color: var(--navy);
+  }
+  .logo .name-stack { line-height: 1; }
+  .logo .name-stack .top { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 18px; }
+  .logo .name-stack .bot { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 10px; color: var(--gold-deep); letter-spacing: 0.18em; text-transform: uppercase; }
+
+  .seal-logo {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: var(--navy);
+    display: grid; place-items: center;
+    color: var(--gold);
+  }
+  .seal-logo .ic { width: 18px; height: 18px; }
+
+  .crumbs { color: #6a6f8c; font-weight: 700; font-size: 14px; }
+  .crumbs a:hover { color: var(--red); }
+  .nav-actions { margin-left: auto; display: flex; gap: 10px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Fredoka', sans-serif; font-weight: 600;
+    border: 3px solid var(--navy); border-radius: 999px;
+    padding: 8px 16px; font-size: 14px;
+    background: #fff; color: var(--navy);
+    box-shadow: 2px 2px 0 var(--navy);
+    cursor: pointer; transition: transform .08s, box-shadow .08s;
+  }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--navy); }
+  .btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--navy); }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn .ic { width: 16px; height: 16px; }
+
+  /* ---------- Lesson header ---------- */
+  .lesson-head {
+    padding: 40px 24px 20px;
+    background:
+      radial-gradient(ellipse 60% 80% at 90% 20%, #ffe4a8 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 5% 80%, #ffd0d0 0%, transparent 60%),
+      var(--cream);
+    position: relative;
+  }
+  .lesson-head-inner {
+    max-width: 1100px; margin: 0 auto;
+  }
+  .star-strip {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold-deep);
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .star-strip .ic { width: 11px; height: 11px; color: var(--red); }
+  .star-strip .ic.gold { color: var(--gold); }
+  .meta-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--cream-2); color: var(--navy);
+    padding: 5px 12px; border-radius: 999px;
+    border: 2px solid var(--navy);
+    font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .pill .ic { width: 13px; height: 13px; }
+  .pill.featured { background: var(--gold); }
+  .pill.grade { background: var(--blue); color: #fff; }
+  .lesson-title {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: clamp(34px, 4.6vw, 56px); color: var(--navy); margin: 6px 0 14px; line-height: 1.02;
+  }
+  .lesson-sub { color: #4a4f74; font-size: 18px; max-width: 720px; margin: 0; }
+
+  /* ---------- Slide stage ---------- */
+  .stage-wrap {
+    padding: 40px 24px 60px;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, #ffeac8 0%, transparent 60%),
+      var(--cream);
+  }
+  .stage {
+    max-width: 1100px; margin: 0 auto;
+    background: #fff;
+    border: 4px solid var(--navy); border-radius: 28px;
+    box-shadow: 10px 10px 0 var(--navy);
+    overflow: hidden;
+    position: relative;
+  }
+  .stage-inner {
+    aspect-ratio: 16/9; min-height: 480px;
+    position: relative; overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    padding: 50px 60px;
+    display: none;
+    opacity: 0; transform: translateX(20px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .slide.active { display: flex; opacity: 1; transform: translateX(0); }
+  .slide.flex-col { flex-direction: column; }
+
+  .slide-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    align-self: flex-start;
+    font-family: 'Fredoka'; font-weight: 700; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    background: var(--navy); color: var(--gold);
+    padding: 6px 14px; border-radius: 999px;
+    margin-bottom: 14px;
+    border: 2px solid var(--gold);
+  }
+  .slide-tag .ic { width: 14px; height: 14px; }
+  .slide h2 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 42px; color: var(--navy); margin: 0 0 14px; line-height: 1.05; }
+  .slide h3 { font-family: 'Fredoka'; font-size: 28px; color: var(--navy); margin: 0 0 10px; }
+  .slide p, .slide li { font-size: 18px; color: #3a3f63; }
+  .slide ul { padding-left: 20px; }
+  .slide ul li { margin-bottom: 8px; }
+  .slide .accent { color: var(--red); }
+
+  /* slide 1 - title */
+  .s-title {
+    background:
+      radial-gradient(circle, rgba(21,34,90,0.08) 1.5px, transparent 2px) 0 0/40px 40px,
+      radial-gradient(circle at 80% 20%, #ffd0d0 0%, transparent 50%),
+      radial-gradient(circle at 20% 80%, #d0e4ff 0%, transparent 50%),
+      linear-gradient(180deg, #fff 0%, var(--cream) 100%);
+    align-items: center; justify-content: center; text-align: center;
+    position: relative;
+  }
+  .s-title h1 {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: clamp(42px, 6vw, 78px);
+    color: var(--navy);
+    line-height: 0.98; margin: 18px 0;
+  }
+  .s-title h1 em { color: var(--red); font-style: italic; font-weight: 900; }
+  .s-title .lesson-num {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: 'Fredoka'; font-weight: 700; font-size: 16px; letter-spacing: 0.18em;
+    color: var(--red); text-transform: uppercase;
+  }
+  .s-title .lesson-num .ic { width: 14px; height: 14px; }
+  .s-title h1 .ic-star-big { width: 0.7em; height: 0.7em; color: var(--red); vertical-align: 0.05em; }
+  .s-title .by { color: #6a6f8c; font-weight: 700; margin-top: 12px; font-style: italic; }
+  .s-title .title-mascot {
+    position: absolute; bottom: 20px; right: 20px;
+    width: 130px; height: 130px;
+    filter: drop-shadow(4px 4px 0 var(--navy));
+  }
+  /* slide 2 - why branches */
+  .s-why { background: linear-gradient(180deg, #fff 0%, #ffe7d6 100%); }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
+  .why-list { display: grid; gap: 14px; }
+  .why-item {
+    display: flex; gap: 14px; align-items: center;
+    background: #fff; border: 3px solid var(--navy); border-radius: 16px;
+    padding: 14px 18px; box-shadow: 4px 4px 0 var(--navy);
+    font-weight: 700; color: var(--navy); font-size: 17px;
+  }
+  .why-item .ico {
+    width: 42px; height: 42px; border-radius: 12px;
+    background: var(--gold); color: var(--navy);
+    border: 2px solid var(--navy);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .why-item .ico .ic { width: 22px; height: 22px; }
+  .balance-banner {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--navy); color: var(--gold);
+    padding: 18px 22px; border-radius: 16px;
+    font-family: 'Fredoka'; font-weight: 700; font-size: 22px;
+    text-align: center; margin-top: 20px;
+    border: 3px solid var(--gold);
+    box-shadow: 4px 4px 0 var(--navy);
+  }
+  .balance-banner .ic { width: 22px; height: 22px; }
+
+  /* scale illustration */
+  .scale-illus { display: grid; place-items: center; height: 100%; }
+  .scale { position: relative; width: 280px; height: 280px; }
+  .scale-stand {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 180px; background: var(--navy); border-radius: 4px;
+  }
+  .scale-base {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 140px; height: 22px; background: var(--navy); border-radius: 6px;
+  }
+  .scale-bar {
+    position: absolute; top: 70px; left: 50%; transform: translateX(-50%) rotate(-3deg);
+    width: 240px; height: 12px; background: var(--navy); border-radius: 4px;
+  }
+  .scale-pan {
+    position: absolute; top: 90px;
+    width: 80px; height: 80px;
+    border: 3px solid var(--navy); border-radius: 50%;
+    background: var(--gold);
+    display: grid; place-items: center;
+    color: var(--navy);
+  }
+  .scale-pan .ic { width: 36px; height: 36px; }
+  .scale-pan.left { left: 10px; background: var(--red); color: #fff; }
+  .scale-pan.right { right: 10px; background: var(--blue); color: #fff; }
+
+  /* slide 3 - three branches */
+  .s-three { background: linear-gradient(180deg, #fff 0%, #e0eaff 100%); }
+  .branch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 20px; }
+  .branch-card {
+    background: #fff; border: 3px solid var(--navy); border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--navy);
+    padding: 22px; text-align: center;
+  }
+  .branch-card .top {
+    width: 70px; height: 70px; border-radius: 50%;
+    margin: 0 auto 14px; display: grid; place-items: center;
+    border: 3px solid var(--navy);
+  }
+  .branch-card .top .ic { width: 36px; height: 36px; }
+  .branch-card.legi .top { background: var(--red); color: #fff; }
+  .branch-card.exec .top { background: var(--blue); color: #fff; }
+  .branch-card.judi .top { background: var(--gold); color: var(--navy); }
+  .branch-card h3 { margin: 0 0 6px; font-size: 22px; color: var(--navy); }
+  .branch-card .role {
+    font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #6a6f8c; margin-bottom: 10px;
+  }
+  .branch-card p { font-size: 15px; color: #3a3f63; margin: 0; }
+  .team-note {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; margin-top: 18px;
+    color: var(--navy); font-weight: 700; font-size: 17px;
+  }
+  .team-note .ic { width: 18px; height: 18px; color: var(--gold); }
+
+  /* branch deep dive */
+  .branch-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+  .detail-art {
+    border: 3px solid var(--navy); border-radius: 22px;
+    padding: 30px; min-height: 320px;
+    display: grid; place-items: center;
+    box-shadow: 6px 6px 0 var(--navy);
+  }
+  .detail-art.red { background: linear-gradient(135deg, #ffe0e0 0%, #ffc0c0 100%); }
+  .detail-art.blue { background: linear-gradient(135deg, #d8edff 0%, #a8c8f0 100%); }
+  .detail-art.gold { background: linear-gradient(135deg, #fff4cc 0%, #ffd97a 100%); }
+
+  .capitol-art { width: 240px; height: 200px; position: relative; }
+  .capitol-dome {
+    width: 120px; height: 80px; background: #fff;
+    border: 3px solid var(--navy); border-radius: 60px 60px 0 0;
+    margin: 0 auto;
+  }
+  .capitol-base {
+    width: 240px; height: 100px; background: #fff;
+    border: 3px solid var(--navy); border-radius: 0 0 8px 8px;
+    margin: -3px auto 0; position: relative;
+  }
+  .capitol-base::before {
+    content: ''; position: absolute; bottom: 30%; left: 0; right: 0; height: 4px;
+    background: var(--navy);
+  }
+  .col {
+    position: absolute; bottom: 30%; width: 16px; background: #fff; border-left: 3px solid var(--navy); border-right: 3px solid var(--navy);
+  }
+  .capitol-base .col1 { left: 30px; height: 60%; }
+  .capitol-base .col2 { left: 70px; height: 60%; }
+  .capitol-base .col3 { left: 110px; height: 60%; }
+  .capitol-base .col4 { left: 150px; height: 60%; }
+  .capitol-base .col5 { left: 190px; height: 60%; }
+  .capitol-flag {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    width: 4px; height: 30px; background: var(--navy);
+  }
+  .capitol-flag::before {
+    content: ''; position: absolute; top: 0; left: 4px; width: 24px; height: 14px;
+    background: var(--red); border: 2px solid var(--navy);
+  }
+
+  .branch-list { display: grid; gap: 10px; margin-top: 12px; }
+  .branch-list .row {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 10px 14px; background: #fff;
+    border: 2px solid var(--navy); border-radius: 12px;
+    font-weight: 600; color: var(--ink); font-size: 16px;
+  }
+  .branch-list .row .check {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    border: 2px solid var(--navy);
+    display: grid; place-items: center; flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .branch-list .row .check .ic { width: 12px; height: 12px; }
+
+  /* white house */
+  .wh-art { width: 260px; height: 180px; position: relative; }
+  .wh-roof {
+    width: 220px; height: 50px; background: #fff;
+    border: 3px solid var(--navy);
+    clip-path: polygon(10% 100%, 50% 0%, 90% 100%);
+    margin: 0 auto;
+  }
+  .wh-body {
+    width: 240px; height: 110px; background: #fff;
+    border: 3px solid var(--navy); border-radius: 6px;
+    margin: -2px auto 0;
+    display: grid; grid-template-columns: repeat(5, 1fr); padding: 16px 12px; gap: 10px;
+  }
+  .wh-window { background: var(--blue); border: 2px solid var(--navy); border-radius: 3px; }
+  .wh-door { background: var(--red); border: 2px solid var(--navy); border-radius: 3px 3px 0 0; }
+
+  /* supreme court */
+  .sc-art { width: 260px; height: 200px; position: relative; }
+  .sc-pediment {
+    width: 240px; height: 40px; background: #fff;
+    border: 3px solid var(--navy);
+    clip-path: polygon(0 100%, 50% 0%, 100% 100%);
+    margin: 0 auto;
+  }
+  .sc-cols {
+    width: 240px; height: 100px; background: #fff;
+    border-left: 3px solid var(--navy); border-right: 3px solid var(--navy);
+    margin: -2px auto 0;
+    display: grid; grid-template-columns: repeat(6, 1fr); padding: 0 12px; gap: 8px;
+  }
+  .sc-col { background: var(--cream-2); border-left: 2px solid var(--navy); border-right: 2px solid var(--navy); }
+  .sc-base { width: 250px; height: 30px; background: var(--navy); border-radius: 4px; margin: 0 auto; }
+  .sc-steps { width: 240px; height: 12px; background: var(--cream-2); border: 2px solid var(--navy); margin: -2px auto 0; }
+
+  /* checks & balances */
+  .s-checks { background: linear-gradient(180deg, #fff 0%, #f3e8ff 100%); }
+  .checks-triangle { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 22px; }
+  .check-card {
+    background: #fff; border: 3px solid var(--navy); border-radius: 16px;
+    padding: 18px; text-align: center; box-shadow: 4px 4px 0 var(--navy);
+  }
+  .check-card .who { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 22px; color: var(--navy); margin-bottom: 6px; }
+  .check-card .does { font-size: 15px; color: #4a4f74; }
+
+  /* recap */
+  .s-recap { background: linear-gradient(180deg, var(--cream) 0%, var(--cream-2) 100%); }
+  .recap-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 18px; }
+  .recap-item {
+    background: #fff; border: 3px solid var(--navy); border-radius: 16px;
+    padding: 18px; box-shadow: 4px 4px 0 var(--navy);
+  }
+  .recap-item .num { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 36px; color: var(--red); line-height: 1; }
+  .recap-item h4 { margin: 6px 0; color: var(--navy); font-size: 18px; font-family: 'Fredoka'; }
+  .recap-item p { font-size: 14px; color: #4a4f74; margin: 0; }
+
+  /* slide controls */
+  .stage-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px;
+    background: var(--cream-2);
+    border-top: 4px solid var(--navy);
+  }
+  .progress {
+    flex: 1; margin: 0 22px;
+    height: 12px; background: #fff;
+    border: 2px solid var(--navy); border-radius: 999px;
+    overflow: hidden; position: relative;
+  }
+  .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--red), var(--gold)); transition: width .3s ease; }
+  .slide-counter { font-family: 'Fredoka'; font-weight: 600; color: var(--navy); font-size: 14px; margin: 0 16px; }
+
+  /* lesson body */
+  .lesson-body {
+    max-width: 1100px; margin: 0 auto;
+    padding: 60px 24px;
+    display: grid; grid-template-columns: 2fr 1fr; gap: 40px;
+  }
+  .lesson-main h2 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 32px; color: var(--navy); margin: 0 0 12px; }
+  .lesson-main h3 { font-family: 'Fredoka'; font-size: 22px; color: var(--navy); margin: 28px 0 8px; }
+  .lesson-main p { font-size: 17px; color: #3a3f63; margin: 0 0 14px; }
+
+  .activity {
+    background: #fff;
+    border: 3px solid var(--navy); border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--navy);
+    padding: 28px; margin-top: 24px;
+    position: relative; overflow: hidden;
+  }
+  .activity h3 { margin-top: 0; display: flex; align-items: center; gap: 10px; }
+  .activity h3 .ico {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--gold); color: var(--navy);
+    border: 2px solid var(--navy);
+    display: grid; place-items: center;
+  }
+  .activity h3 .ico .ic { width: 20px; height: 20px; }
+  .activity ol { margin: 0; padding-left: 20px; color: #3a3f63; font-size: 16px; }
+  .activity ol li { margin-bottom: 10px; }
+
+  /* Quiz */
+  .quiz {
+    background: var(--navy); color: #fff;
+    border-radius: 22px; padding: 32px;
+    margin-top: 30px;
+    border: 3px solid var(--navy);
+    box-shadow: 6px 6px 0 var(--gold);
+    position: relative; overflow: hidden;
+  }
+  .quiz::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(230,185,77,0.25) 1.5px, transparent 2px);
+    background-size: 50px 50px;
+    background-position: 12px 12px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .quiz h3 {
+    color: #fff; margin: 0 0 6px;
+    font-family: 'Playfair Display', serif; font-weight: 900; font-size: 26px;
+    display: flex; align-items: center; gap: 8px;
+    position: relative;
+  }
+  .quiz h3 .ic { width: 22px; height: 22px; color: var(--gold); }
+  .quiz .q-sub { color: #c8cdf0; margin: 0 0 22px; position: relative; }
+  .question {
+    background: #1f2d70; border: 2px solid var(--gold-deep);
+    border-radius: 14px; padding: 18px; margin-bottom: 14px;
+    position: relative;
+  }
+  .question p.q { font-weight: 700; margin: 0 0 12px; color: #fff; font-size: 17px; }
+  .options { display: grid; gap: 8px; }
+  .option {
+    background: #15225a; border: 2px solid #3d4a85;
+    border-radius: 10px; padding: 10px 14px;
+    cursor: pointer; transition: all .15s;
+    color: #e8ebff; font-weight: 600; font-size: 15px;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+  }
+  .option:hover { background: #3d4a85; border-color: var(--gold); }
+  .option.correct { background: var(--green); border-color: #fff; color: #fff; }
+  .option.wrong { background: var(--red); border-color: #fff; color: #fff; }
+  .option:disabled { cursor: default; }
+  .quiz-score {
+    margin-top: 18px; padding: 14px; text-align: center;
+    background: var(--gold); color: var(--navy);
+    border-radius: 12px; font-family: 'Playfair Display'; font-weight: 900; font-size: 20px;
+    display: none; position: relative;
+  }
+  .quiz-score.show { display: block; }
+
+  /* Sidebar */
+  .lesson-side { position: sticky; top: 80px; align-self: start; }
+  .side-card {
+    background: #fff; border: 3px solid var(--navy); border-radius: 18px;
+    box-shadow: 5px 5px 0 var(--navy);
+    padding: 22px; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .side-card h4 {
+    margin: 4px 0 12px; color: var(--navy);
+    font-family: 'Playfair Display'; font-weight: 800; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .side-card .row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px dashed #d6c69b;
+    font-size: 14px;
+  }
+  .side-card .row:last-child { border-bottom: none; }
+  .side-card .row .k { color: #6a6f8c; font-weight: 700; }
+  .side-card .row .v { color: var(--navy); font-weight: 800; }
+  .vocab .term { font-weight: 800; color: var(--navy); font-family: 'Playfair Display'; }
+  .vocab .def { color: #4a4f74; font-size: 14px; margin-bottom: 12px; }
+
+  /* Up next */
+  .up-next {
+    background: var(--navy); color: #fff; padding: 50px 24px;
+    position: relative; overflow: hidden;
+  }
+  .up-next::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(230,185,77,0.3) 1.5px, transparent 2px);
+    background-size: 50px 50px;
+    background-position: 12px 12px;
+    opacity: 0.4;
+  }
+  .up-next-inner {
+    max-width: 1100px; margin: 0 auto; position: relative;
+    display: flex; align-items: center; justify-content: space-between; gap: 30px;
+    flex-wrap: wrap;
+  }
+  .up-next h3 { font-family: 'Playfair Display'; font-weight: 900; font-size: 28px; margin: 0 0 6px; color: #fff; }
+  .up-next p { color: #c8cdf0; margin: 0; }
+
+  footer {
+    background: var(--navy-deep); color: #c8cdf0;
+    padding: 0; text-align: center; font-size: 14px;
+    border-top: 4px solid var(--gold);
+  }
+  footer .foot-text { padding: 24px; }
+
+  @media (max-width: 900px) {
+    .lesson-body { grid-template-columns: 1fr; }
+    .lesson-side { position: static; }
+    .branch-detail, .why-grid { grid-template-columns: 1fr; }
+    .branch-grid { grid-template-columns: 1fr; }
+    .recap-grid { grid-template-columns: 1fr; }
+    .checks-triangle { grid-template-columns: 1fr; }
+    .slide { padding: 30px 26px; }
+    .slide h2 { font-size: 30px; }
+    .stage-inner { aspect-ratio: auto; min-height: 600px; }
+    .crumbs { display: none; }
+    .s-title .title-mascot { width: 90px; height: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <polygon points="12,2 14.85,9.27 22.5,9.74 16.6,14.55 18.59,22 12,17.77 5.41,22 7.4,14.55 1.5,9.74 9.15,9.27" fill="currentColor" stroke="currentColor" stroke-width="0.5" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-scales" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="3" x2="12" y2="21"/>
+        <line x1="6" y1="21" x2="18" y2="21"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <circle cx="12" cy="3" r="1.2" fill="currentColor"/>
+        <path d="M5 6 L2 13 L8 13 Z" fill="currentColor" fill-opacity="0.25"/>
+        <path d="M19 6 L16 13 L22 13 Z" fill="currentColor" fill-opacity="0.25"/>
+      </g>
+    </symbol>
+    <symbol id="i-capitol" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12"/>
+        <line x1="2.5" y1="12" x2="21.5" y2="12"/>
+        <line x1="3" y1="21" x2="21" y2="21"/>
+        <line x1="6" y1="12" x2="6" y2="21"/>
+        <line x1="10" y1="12" x2="10" y2="21"/>
+        <line x1="14" y1="12" x2="14" y2="21"/>
+        <line x1="18" y1="12" x2="18" y2="21"/>
+        <line x1="12" y1="3" x2="12" y2="1.5"/>
+        <circle cx="12" cy="1.2" r="0.7" fill="currentColor"/>
+      </g>
+    </symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 5 C5 3.5 6 2.5 7.5 2.5 L18 2.5 C19.5 2.5 20.5 3.5 20.5 5 L20.5 7 L17 7"/>
+        <path d="M5 5 L5 19 C5 20.5 6 21.5 7.5 21.5 L17 21.5 C15.5 21.5 14.5 20.5 14.5 19 L14.5 7 L5 7"/>
+        <line x1="7" y1="11" x2="12.5" y2="11"/>
+        <line x1="7" y1="15" x2="12.5" y2="15"/>
+      </g>
+    </symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="3" x2="4" y2="22"/>
+        <rect x="4" y="3" width="16" height="11"/>
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="4" y1="9" x2="20" y2="9"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <rect x="4" y="3" width="7" height="5" fill="currentColor" fill-opacity="0.45"/>
+      </g>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <polyline points="5,12 10,17 19,7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="13,6 19,12 13,18"/>
+      </g>
+    </symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="11,6 5,12 11,18"/>
+      </g>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12,7 12,12 16,14"/>
+      </g>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12 C5 6 8 4 12 4 C16 4 19 6 22 12 C19 18 16 20 12 20 C8 20 5 18 2 12 Z"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </g>
+    </symbol>
+    <symbol id="i-no" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="9"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </g>
+    </symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 14 L7 9 L11 11 L9 13 L13 17 L15 15 L18 18"/>
+        <path d="M22 14 L17 9 L13 11 L15 13 L11 17 L9 15"/>
+      </g>
+    </symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="4" width="14" height="18" rx="2"/>
+        <rect x="9" y="2" width="6" height="4" rx="1" fill="currentColor"/>
+        <line x1="9" y1="11" x2="15" y2="11"/>
+        <line x1="9" y1="15" x2="15" y2="15"/>
+        <line x1="9" y1="19" x2="13" y2="19"/>
+      </g>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="3" x2="12" y2="15"/>
+        <polyline points="7,10 12,15 17,10"/>
+        <path d="M3 17 L3 20 C3 20.5 3.5 21 4 21 L20 21 C20.5 21 21 20.5 21 20 L21 17"/>
+      </g>
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18 C6 11 8 5 12 5 C16 5 18 11 18 18 Z" fill="currentColor" fill-opacity="0.18"/>
+        <line x1="4" y1="18" x2="20" y2="18"/>
+        <line x1="12" y1="2.5" x2="12" y2="5"/>
+        <circle cx="12" cy="20.5" r="1.2" fill="currentColor"/>
+      </g>
+    </symbol>
+    <!-- Cute Eagle mascot -->
+    <symbol id="i-eagle" viewBox="0 0 120 120">
+      <path d="M16 70 Q4 42 24 36 Q34 50 36 70 Z" fill="#7a4d22" stroke="#15225a" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M104 70 Q116 42 96 36 Q86 50 84 70 Z" fill="#7a4d22" stroke="#15225a" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="60" cy="74" rx="34" ry="28" fill="#a87b4a" stroke="#15225a" stroke-width="3"/>
+      <path d="M40 74 Q60 95 80 74 Q72 95 60 100 Q48 95 40 74 Z" fill="#fff" stroke="#15225a" stroke-width="2.5"/>
+      <circle cx="60" cy="42" r="24" fill="#fff" stroke="#15225a" stroke-width="3"/>
+      <path d="M60 48 L52 58 L60 56 Z" fill="#e6b94d" stroke="#15225a" stroke-width="2"/>
+      <path d="M60 48 L68 58 L60 56 Z" fill="#e6b94d" stroke="#15225a" stroke-width="2"/>
+      <circle cx="50" cy="38" r="3.2" fill="#15225a"/>
+      <circle cx="70" cy="38" r="3.2" fill="#15225a"/>
+      <circle cx="51.2" cy="36.8" r="1" fill="#fff"/>
+      <circle cx="71.2" cy="36.8" r="1" fill="#fff"/>
+      <path d="M44 32 Q47 28 51 32" fill="none" stroke="#15225a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M76 32 Q73 28 69 32" fill="none" stroke="#15225a" stroke-width="2.5" stroke-linecap="round"/>
+      <polygon points="60,80 62.4,85 67.6,85 63.4,88 65.2,93 60,90 54.8,93 56.6,88 52.4,85 57.6,85" fill="#e6b94d" stroke="#15225a" stroke-width="1.5" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <span class="seal-logo"><svg class="ic"><use href="#i-star"/></svg></span>
+      <span class="name-stack">
+        <span class="top">School Civics</span>
+      </span>
+    </a>
+    <div class="crumbs">
+      <a href="index.html">Lessons</a> &nbsp;›&nbsp; <span style="color: var(--navy);">Lesson 1</span>
+    </div>
+    <div class="nav-actions">
+      <a class="btn" href="index.html"><svg class="ic"><use href="#i-arrow-left"/></svg> All lessons</a>
+      <a class="btn btn-gold" href="#activity"><svg class="ic"><use href="#i-download"/></svg> Worksheet</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ LESSON HEAD ============ -->
+<header class="lesson-head">
+  <div class="lesson-head-inner">
+    <div class="meta-row">
+      <span class="pill featured"><svg class="ic"><use href="#i-star"/></svg> Lesson 1</span>
+      <span class="pill grade">Grades 3–6</span>
+      <span class="pill"><svg class="ic"><use href="#i-clock"/></svg> 35 min</span>
+      <span class="pill"><svg class="ic"><use href="#i-capitol"/></svg> Topic: How Government Works</span>
+    </div>
+    <h1 class="lesson-title">The Three Branches of Government</h1>
+    <p class="lesson-sub">Why split power into three? Kids meet Legislative, Executive, and Judicial — and find out who keeps each one in check.</p>
+  </div>
+</header>
+
+<!-- ============ SLIDE STAGE ============ -->
+<section class="stage-wrap">
+  <div class="stage">
+    <div class="stage-inner" id="stage">
+
+      <!-- Slide 1: Title -->
+      <div class="slide s-title flex-col active" data-slide="1">
+        <span class="lesson-num">Lesson 1 · School Civics</span>
+        <h1>The Three<br/>Branches of <br/><em>Government</em></h1>
+        <p class="by">A story about why power gets shared.</p>
+      </div>
+
+      <!-- Slide 2: Why branches? -->
+      <div class="slide s-why flex-col" data-slide="2">
+        <span class="slide-tag">The big idea</span>
+        <h2>Why have branches?</h2>
+        <div class="why-grid">
+          <div>
+            <div class="why-list">
+              <div class="why-item"><div class="ico"><svg class="ic"><use href="#i-scales"/></svg></div>Power is shared, never hoarded</div>
+              <div class="why-item"><div class="ico" style="background: var(--red); color: #fff;"><svg class="ic"><use href="#i-no"/></svg></div>No single group can take over</div>
+              <div class="why-item"><div class="ico" style="background: var(--green); color: #fff;"><svg class="ic"><use href="#i-handshake"/></svg></div>Things stay fair for everybody</div>
+              <div class="why-item"><div class="ico" style="background: var(--blue); color: #fff;"><svg class="ic"><use href="#i-eye"/></svg></div>Each branch keeps watch on the others</div>
+            </div>
+            <div class="balance-banner"><svg class="ic"><use href="#i-star"/></svg> This is called <span style="color: #fff;">Checks &amp; Balances</span> <svg class="ic"><use href="#i-star"/></svg></div>
+          </div>
+          <div class="scale-illus">
+            <div class="scale">
+              <div class="scale-base"></div>
+              <div class="scale-stand"></div>
+              <div class="scale-bar"></div>
+              <div class="scale-pan left"><svg class="ic"><use href="#i-scales"/></svg></div>
+              <div class="scale-pan right"><svg class="ic"><use href="#i-scales"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3: The three branches -->
+      <div class="slide s-three flex-col" data-slide="3">
+        <span class="slide-tag">Meet the team</span>
+        <h2>Our government has three branches</h2>
+        <p style="margin: 0 0 6px;">Each one has a different job — and they only work when they work together.</p>
+        <div class="branch-grid">
+          <div class="branch-card legi">
+            <div class="top"><svg class="ic"><use href="#i-capitol"/></svg></div>
+            <h3>Legislative</h3>
+            <div class="role">The Lawmakers</div>
+            <p>Makes the laws.</p>
+          </div>
+          <div class="branch-card exec">
+            <div class="top"><svg class="ic"><use href="#i-flag"/></svg></div>
+            <h3>Executive</h3>
+            <div class="role">The Doers</div>
+            <p>Carries out the laws.</p>
+          </div>
+          <div class="branch-card judi">
+            <div class="top"><svg class="ic"><use href="#i-scales"/></svg></div>
+            <h3>Judicial</h3>
+            <div class="role">The Interpreters</div>
+            <p>Explains the laws.</p>
+          </div>
+        </div>
+        <div class="team-note"><svg class="ic"><use href="#i-star"/></svg> Three branches. One team. <svg class="ic"><use href="#i-star"/></svg></div>
+      </div>
+
+      <!-- Slide 4: Legislative -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #ffd6d6 100%);" data-slide="4">
+        <span class="slide-tag" style="background: var(--red); color: #fff; border-color: var(--cream);">Branch 1 of 3</span>
+        <h2>Legislative Branch — <span class="accent">Congress</span></h2>
+        <div class="branch-detail">
+          <div>
+            <p style="margin-bottom: 14px;">The legislative branch <strong>makes the laws</strong>. They meet in Washington, D.C.</p>
+            <p style="margin-bottom: 14px;"><strong>Two parts together = Congress:</strong></p>
+            <div class="branch-list">
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Senate</strong> — 100 members (2 per state)</span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>House of Representatives</strong> — 435 members (based on state population)</span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Citizens <strong>elect</strong> the members of both</span></div>
+            </div>
+            <p style="margin-top: 14px; font-size: 15px; color: #6a6f8c; display: flex; align-items: center; gap: 6px;"><svg class="ic" style="color: var(--gold)"><use href="#i-star"/></svg> Fun fact: California has the most population, so it has 52 House members.</p>
+          </div>
+          <div class="detail-art red">
+            <div class="capitol-art">
+              <div class="capitol-dome"></div>
+              <div class="capitol-base">
+                <div class="capitol-flag"></div>
+                <div class="col col1"></div>
+                <div class="col col2"></div>
+                <div class="col col3"></div>
+                <div class="col col4"></div>
+                <div class="col col5"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 5: What does Legislative do -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #ffe7d6 100%);" data-slide="5">
+        <span class="slide-tag" style="background: var(--red); color: #fff; border-color: var(--cream);">Legislative jobs</span>
+        <h2>What does Congress actually do?</h2>
+        <div class="branch-list" style="margin-top: 20px;">
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Writes</strong> new laws</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Votes</strong> on laws</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Decides how the government <strong>spends money</strong></span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Can <strong>change or remove</strong> old laws</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Represents</strong> the people's ideas and needs</span></div>
+        </div>
+      </div>
+
+      <!-- Slide 6: Executive -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #d8edff 100%);" data-slide="6">
+        <span class="slide-tag" style="background: var(--blue); color: #fff; border-color: var(--cream);">Branch 2 of 3</span>
+        <h2>Executive Branch — <span class="accent" style="color: var(--blue-deep);">The President &amp; Team</span></h2>
+        <div class="branch-detail">
+          <div class="detail-art blue">
+            <div class="wh-art">
+              <div class="wh-roof"></div>
+              <div class="wh-body">
+                <div class="wh-window"></div>
+                <div class="wh-window"></div>
+                <div class="wh-door"></div>
+                <div class="wh-window"></div>
+                <div class="wh-window"></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p style="margin-bottom: 14px;">This branch <strong>carries out the laws</strong>. It's led by the President of the United States.</p>
+            <p style="margin-bottom: 14px;">The President lives and works in the <strong>White House</strong>.</p>
+            <div class="branch-list">
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>The <strong>President</strong></span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>The <strong>Vice President</strong></span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Members of the <strong>Cabinet</strong></span></div>
+            </div>
+            <p style="margin-top: 14px; font-size: 15px; color: #6a6f8c; display: flex; align-items: center; gap: 6px;"><svg class="ic" style="color: var(--gold)"><use href="#i-star"/></svg> Together, they help run the country every single day.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 7: What does Executive do -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #d8edff 100%);" data-slide="7">
+        <span class="slide-tag" style="background: var(--blue); color: #fff; border-color: var(--cream);">Executive jobs</span>
+        <h2>What does the President do?</h2>
+        <div class="branch-list" style="margin-top: 20px;">
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Enforces</strong> laws — makes sure people follow them</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Can <strong>approve</strong> or <strong>veto</strong> (reject) laws</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Commands</strong> the military</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Works with <strong>other countries</strong></span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Makes <strong>important decisions</strong> for the nation</span></div>
+        </div>
+      </div>
+
+      <!-- Slide 8: Judicial -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #fff4cc 100%);" data-slide="8">
+        <span class="slide-tag" style="background: var(--gold); color: var(--navy); border-color: var(--navy);">Branch 3 of 3</span>
+        <h2>Judicial Branch — <span class="accent" style="color: var(--gold-deep);">The Courts</span></h2>
+        <div class="branch-detail">
+          <div>
+            <p style="margin-bottom: 14px;">The judicial branch <strong>explains the laws</strong>.</p>
+            <p style="margin-bottom: 14px;">It's made up of <strong>judges</strong> and <strong>courts</strong>. The highest court is the <strong>Supreme Court</strong>.</p>
+            <div class="branch-list">
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Judges are <strong>experts in the law</strong></span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>They <strong>listen to court cases</strong></span></div>
+              <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>The Supreme Court has <strong>9 Justices</strong></span></div>
+            </div>
+          </div>
+          <div class="detail-art gold">
+            <div class="sc-art">
+              <div class="sc-pediment"></div>
+              <div class="sc-cols">
+                <div class="sc-col"></div>
+                <div class="sc-col"></div>
+                <div class="sc-col"></div>
+                <div class="sc-col"></div>
+                <div class="sc-col"></div>
+                <div class="sc-col"></div>
+              </div>
+              <div class="sc-steps"></div>
+              <div class="sc-base"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 9: What does Judicial do -->
+      <div class="slide flex-col" style="background: linear-gradient(180deg, #fff 0%, #fff4cc 100%);" data-slide="9">
+        <span class="slide-tag" style="background: var(--gold); color: var(--navy); border-color: var(--navy);">Judicial jobs</span>
+        <h2>What do the courts do?</h2>
+        <div class="branch-list" style="margin-top: 20px;">
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Decides if laws follow the <strong>Constitution</strong></span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Helps <strong>settle disagreements</strong></span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Protects</strong> people's rights</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span><strong>Interprets</strong> what laws mean</span></div>
+          <div class="row"><div class="check"><svg class="ic"><use href="#i-check"/></svg></div><span>Makes sure laws are <strong>fair</strong></span></div>
+        </div>
+      </div>
+
+      <!-- Slide 10: Checks and Balances -->
+      <div class="slide s-checks flex-col" data-slide="10">
+        <span class="slide-tag">The big rule</span>
+        <h2>Checks &amp; Balances</h2>
+        <p>Each branch has powers <em>over</em> the others — that's how everything stays fair.</p>
+        <div class="checks-triangle">
+          <div class="check-card">
+            <div class="who" style="color: var(--blue-deep);">President</div>
+            <div class="does">Can <strong>veto</strong> laws Congress writes</div>
+          </div>
+          <div class="check-card">
+            <div class="who" style="color: var(--red-deep);">Congress</div>
+            <div class="does">Can <strong>override</strong> the President's veto</div>
+          </div>
+          <div class="check-card">
+            <div class="who" style="color: var(--gold-deep);">Courts</div>
+            <div class="does">Can say a law is <strong>unconstitutional</strong></div>
+          </div>
+        </div>
+        <div class="balance-banner" style="margin-top: 22px;"><svg class="ic"><use href="#i-star"/></svg> No branch is stronger than the others. <svg class="ic"><use href="#i-star"/></svg></div>
+      </div>
+
+      <!-- Slide 11: Recap -->
+      <div class="slide s-recap flex-col" data-slide="11">
+        <span class="slide-tag">Quick recap</span>
+        <h2>Three branches, one job: keep things fair</h2>
+        <div class="recap-grid">
+          <div class="recap-item">
+            <div class="num">1</div>
+            <h4>Legislative</h4>
+            <p><strong>Makes</strong> the laws. Congress = Senate + House.</p>
+          </div>
+          <div class="recap-item">
+            <div class="num">2</div>
+            <h4>Executive</h4>
+            <p><strong>Carries out</strong> the laws. Led by the President.</p>
+          </div>
+          <div class="recap-item">
+            <div class="num">3</div>
+            <h4>Judicial</h4>
+            <p><strong>Explains</strong> the laws. Led by the Supreme Court.</p>
+          </div>
+        </div>
+        <div style="text-align: center; margin-top: 24px;">
+          <a href="#quiz" class="btn btn-primary" style="font-size: 16px; padding: 12px 22px;"><svg class="ic"><use href="#i-star"/></svg> Try the quiz <svg class="ic"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="stage-controls">
+      <button class="btn" id="prevBtn"><svg class="ic"><use href="#i-arrow-left"/></svg> Back</button>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <span class="slide-counter"><span id="curSlide">1</span> / <span id="totSlide">11</span></span>
+      <button class="btn btn-primary" id="nextBtn">Next <svg class="ic"><use href="#i-arrow"/></svg></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LESSON BODY ============ -->
+<div class="lesson-body">
+  <div class="lesson-main">
+    <h2>About this lesson</h2>
+    <p>
+      In this 35-minute lesson, students explore <strong>why</strong> the U.S. government is split into three branches —
+      and discover the simple but powerful idea of <strong>checks and balances</strong>.
+      They'll meet Congress, the President, and the Supreme Court, and figure out how each one keeps the others fair.
+    </p>
+
+    <h3>What kids will learn</h3>
+    <p>
+      By the end, students can name the three branches, describe what each one does, and explain in their own words
+      why no single branch can take over. They'll see that government is a team — and a team needs rules.
+    </p>
+
+    <div class="activity" id="activity">
+      <h3><span class="ico"><svg class="ic"><use href="#i-clipboard"/></svg></span> Hands-on Activity: Build Your Own Tiny Government</h3>
+      <p style="margin-top: 0;">Try this with your class or at home — works great in groups of 3.</p>
+      <ol>
+        <li>Pick a <strong>fake rule</strong> for the classroom (e.g., "snack time is now twice a day").</li>
+        <li>Assign each group member a branch: <strong>Lawmaker, President, Judge</strong>.</li>
+        <li>The Lawmaker <em>writes</em> the rule. The President <em>approves or vetoes</em> it.</li>
+        <li>If approved, the Judge decides if it's <em>fair</em> (does it work for everyone?).</li>
+        <li>Talk it out: what happens when one person disagrees? How do you fix it together?</li>
+      </ol>
+      <p style="margin-top: 14px; color: #6a6f8c; font-size: 14px; display: flex; align-items: center; gap: 6px;"><svg class="ic"><use href="#i-clock"/></svg> Takes about 15 minutes. Worksheet included.</p>
+    </div>
+
+    <!-- Quiz -->
+    <div class="quiz" id="quiz">
+      <h3><svg class="ic"><use href="#i-star"/></svg> Quick Quiz</h3>
+      <p class="q-sub">5 questions to lock in what you learned.</p>
+
+      <div class="question" data-q="0">
+        <p class="q">1. Which branch <strong>makes</strong> the laws?</p>
+        <div class="options">
+          <button class="option" data-correct="false">Executive</button>
+          <button class="option" data-correct="true">Legislative</button>
+          <button class="option" data-correct="false">Judicial</button>
+        </div>
+      </div>
+
+      <div class="question" data-q="1">
+        <p class="q">2. Where does the President live and work?</p>
+        <div class="options">
+          <button class="option" data-correct="false">The Capitol</button>
+          <button class="option" data-correct="false">The Supreme Court</button>
+          <button class="option" data-correct="true">The White House</button>
+        </div>
+      </div>
+
+      <div class="question" data-q="2">
+        <p class="q">3. How many members are in the U.S. Senate?</p>
+        <div class="options">
+          <button class="option" data-correct="false">435</button>
+          <button class="option" data-correct="true">100</button>
+          <button class="option" data-correct="false">9</button>
+        </div>
+      </div>
+
+      <div class="question" data-q="3">
+        <p class="q">4. What is it called when each branch keeps watch on the others?</p>
+        <div class="options">
+          <button class="option" data-correct="true">Checks and Balances</button>
+          <button class="option" data-correct="false">Separation of School</button>
+          <button class="option" data-correct="false">The Big Vote</button>
+        </div>
+      </div>
+
+      <div class="question" data-q="4">
+        <p class="q">5. Which branch can say a law is unconstitutional?</p>
+        <div class="options">
+          <button class="option" data-correct="false">Legislative</button>
+          <button class="option" data-correct="false">Executive</button>
+          <button class="option" data-correct="true">Judicial</button>
+        </div>
+      </div>
+
+      <div class="quiz-score" id="quizScore"></div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="lesson-side">
+    <div class="side-card">
+      <h4>Lesson at a glance</h4>
+      <div class="row"><span class="k">Length</span><span class="v">35 min</span></div>
+      <div class="row"><span class="k">Grades</span><span class="v">3–6</span></div>
+      <div class="row"><span class="k">Slides</span><span class="v">11</span></div>
+      <div class="row"><span class="k">Activity</span><span class="v">Yes</span></div>
+      <div class="row"><span class="k">Quiz</span><span class="v">5 questions</span></div>
+      <div class="row"><span class="k">Standards</span><span class="v">NCSS C.1, C.2</span></div>
+    </div>
+
+    <div class="side-card vocab">
+      <h4>Vocabulary</h4>
+      <div class="term">Branch</div>
+      <div class="def">A part of the government with its own job.</div>
+      <div class="term">Congress</div>
+      <div class="def">The lawmaking part of government — Senate + House.</div>
+      <div class="term">Veto</div>
+      <div class="def">When the President rejects a law.</div>
+      <div class="term">Constitution</div>
+      <div class="def">The set of rules that the U.S. government follows.</div>
+      <div class="term">Justice</div>
+      <div class="def">A judge on the Supreme Court.</div>
+    </div>
+
+    <div class="side-card">
+      <h4>Materials</h4>
+      <p style="font-size: 14px; color: #4a4f74; margin: 0 0 12px;">A printable worksheet and answer key are included with this lesson.</p>
+      <a class="btn btn-gold" style="width: 100%; justify-content: center;" href="#"><svg class="ic"><use href="#i-download"/></svg> Worksheet (PDF)</a>
+    </div>
+  </aside>
+</div>
+
+<!-- ============ UP NEXT ============ -->
+<section class="up-next">
+  <div class="up-next-inner">
+    <div>
+      <h3>Up next: What is the Constitution?</h3>
+      <p>One famous document, lots of big ideas. Let's find out what's inside.</p>
+    </div>
+    <a class="btn btn-gold" href="index.html">Back to all lessons <svg class="ic"><use href="#i-arrow"/></svg></a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-text">© 2026 School Civics · Made for curious classrooms.</div>
+</footer>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let current = 0;
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const curEl = document.getElementById('curSlide');
+  const totEl = document.getElementById('totSlide');
+  totEl.textContent = totalSlides;
+
+  function showSlide(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    curEl.textContent = i + 1;
+    progressBar.style.width = ((i + 1) / totalSlides * 100) + '%';
+    prevBtn.disabled = i === 0;
+    nextBtn.innerHTML = i === totalSlides - 1
+      ? '<svg class="ic"><use href="#i-star"/></svg> Done!'
+      : 'Next <svg class="ic"><use href="#i-arrow"/></svg>';
+  }
+  prevBtn.addEventListener('click', () => { if (current > 0) { current--; showSlide(current); } });
+  nextBtn.addEventListener('click', () => {
+    if (current < totalSlides - 1) { current++; showSlide(current); }
+    else { document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' }); }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prevBtn.click();
+    if (e.key === 'ArrowRight') nextBtn.click();
+  });
+  showSlide(0);
+
+  const questions = document.querySelectorAll('.question');
+  let answered = 0, correct = 0;
+  questions.forEach(q => {
+    const opts = q.querySelectorAll('.option');
+    opts.forEach(opt => {
+      opt.addEventListener('click', () => {
+        if (q.dataset.done) return;
+        q.dataset.done = '1';
+        const isCorrect = opt.dataset.correct === 'true';
+        opt.classList.add(isCorrect ? 'correct' : 'wrong');
+        if (!isCorrect) {
+          opts.forEach(o => { if (o.dataset.correct === 'true') o.classList.add('correct'); });
+        }
+        opts.forEach(o => o.disabled = true);
+        if (isCorrect) correct++;
+        answered++;
+        if (answered === questions.length) {
+          const score = document.getElementById('quizScore');
+          score.classList.add('show');
+          let msg = `You got ${correct} out of ${questions.length}!`;
+          if (correct === questions.length) msg += ' Perfect score!';
+          else if (correct >= 3) msg += ' Great work!';
+          else msg += ' Try the lesson again to lock it in!';
+          score.textContent = msg;
+        }
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -232,26 +232,6 @@
   .error-msg.show { display: flex; }
   .error-msg .ic { width: 14px; height: 14px; }
 
-  /* Touch ID */
-  .touchid-wrap { margin-top: 16px; }
-  .touchid-divider {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px; color: var(--ink-light);
-    font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .touchid-divider::before, .touchid-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .touchid-btn {
-    display: inline-flex; width: 100%; align-items: center; justify-content: center; gap: 10px;
-    padding: 14px;
-    background: var(--cream); border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500;
-    color: var(--ink); cursor: pointer;
-    transition: all .2s;
-  }
-  .touchid-btn:hover { border-color: var(--accent); }
-  .touchid-btn .ic { width: 20px; height: 20px; }
-  .touchid-status { font-size: 13px; text-align: center; margin-top: 10px; min-height: 18px; color: var(--ink-light); }
-
   .alt-link { text-align: center; margin-top: 16px; font-size: 14px; color: var(--ink-muted); }
   .alt-link button {
     background: none; border: none;
@@ -1184,14 +1164,6 @@
 
     <button class="btn btn-primary btn-block" onclick="doLogin()">Sign In <svg class="ic"><use href="#i-arrow"/></svg></button>
 
-    <div id="touchid-wrap" class="touchid-wrap" style="display:none;">
-      <div class="touchid-divider"><span>or</span></div>
-      <button id="touchid-btn" onclick="doTouchID()" class="touchid-btn">
-        <svg class="ic"><use href="#i-touch"/></svg> Sign in with Touch ID
-      </button>
-      <div id="touchid-status" class="touchid-status"></div>
-    </div>
-
     <div class="alt-link">
       Applicant?
       <button onclick="showInternLogin()">Sign in to the Applicant Portal</button>
@@ -1654,14 +1626,14 @@
     <div class="hiring-top">
       <div class="page-header" style="margin-bottom:0;">
         <h2>Members</h2>
-        <p>Owner, admins, staff members, awaiting consent, and pending review.</p>
+        <p id="members-page-subtitle">Owner, admins, staff members, awaiting consent, and pending review.</p>
       </div>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div id="members-page-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="btn" onclick="openRolesModal()"><svg class="ic"><use href="#i-shield"/></svg> Manage roles</button>
         <button class="btn btn-accent" onclick="openApplicantModal()"><svg class="ic"><use href="#i-plus"/></svg> Add member</button>
       </div>
     </div>
-    <div class="sync-notice"><svg class="ic"><use href="#i-cloud"/></svg> All changes <strong>save automatically</strong> across devices &amp; browsers.</div>
+    <div id="members-page-sync" class="sync-notice"><svg class="ic"><use href="#i-cloud"/></svg> All changes <strong>save automatically</strong> across devices &amp; browsers.</div>
     <div id="members-filter-bar" class="members-filter-bar"></div>
     <div id="members-sections"></div>
   </div>
@@ -2447,6 +2419,12 @@ async function loadData() {
     announcements = cloud.announcements || [];
     notesByUser   = cloud.notesByUser   || {};
     settings      = cloud.settings      || { siteLink: '' };
+  }
+  // Apply persisted founder profile (display name + avatar) to the in-memory USERS map
+  if (settings && settings.founderProfile && settings.founderProfile.name) {
+    if (USERS['SC Founder']) USERS['SC Founder'].name = settings.founderProfile.name;
+  }
+  if (cloud) {
     try {
       localStorage.setItem('sc_todos',         JSON.stringify(todos));
       localStorage.setItem('sc_events',        JSON.stringify(events));
@@ -2458,10 +2436,80 @@ async function loadData() {
     } catch(e) {}
   }
 }
+// ─── SESSION PERSISTENCE ───
+// Saves the logged-in user to localStorage so a refresh returns straight to the app.
+const SESSION_KEY = 'sc_session_v1';
+function saveSession() {
+  try {
+    if (!currentUser) return;
+    // Re-derive applicantData freshly on restore from the live `applicants` list
+    // so we don't store a stale snapshot.
+    const slim = {
+      username: currentUser.username || null,
+      pass:     currentUser.pass     || null,
+      staffId:  currentUser.staffId  || null,
+      role:     currentUser.role,
+      name:     currentUser.name,
+      initials: currentUser.initials,
+      applicantId: currentUser.applicantId || null,
+    };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(slim));
+  } catch(e) {}
+}
+function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch(e) {} }
+function restoreSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const s = JSON.parse(raw);
+    if (!s) return null;
+    // Resolve fresh applicantData (in case status / pay / role / name / avatar changed)
+    if (s.applicantId) {
+      const ap = applicants.find(a => a.id === s.applicantId);
+      if (!ap) { clearSession(); return null; }
+      if (ap.fired) { clearSession(); return null; }
+      s.applicantData = ap;
+      s.name = ap.name || s.name;
+      s.initials = (s.name || '').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+      s.role = ap.isAdmin ? 'admin' : 'member';
+    } else if (s.role === 'founder') {
+      // Apply the latest founder profile from settings
+      if (settings && settings.founderProfile) {
+        if (settings.founderProfile.name) {
+          s.name = settings.founderProfile.name;
+          s.initials = s.name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+        }
+        if (settings.founderProfile.avatar) s.founderAvatar = settings.founderProfile.avatar;
+      }
+    }
+    return s;
+  } catch(e) { clearSession(); return null; }
+}
+
+// Renders every data-bound page so a refresh shows everything that was saved.
+function renderAll() {
+  try { if (typeof renderTodos === 'function') renderTodos(); } catch(e) { console.warn('renderTodos', e); }
+  try { if (typeof renderCalendar === 'function') renderCalendar(); } catch(e) { console.warn('renderCalendar', e); }
+  try { if (typeof renderMembers === 'function') renderMembers(); } catch(e) { console.warn('renderMembers', e); }
+  try { if (typeof renderApplicants === 'function' && currentUser && (currentUser.role === 'founder' || currentUser.role === 'admin')) renderApplicants(); } catch(e) { console.warn('renderApplicants', e); }
+  try { if (typeof renderAnnouncements === 'function') renderAnnouncements(); } catch(e) { console.warn('renderAnnouncements', e); }
+  try { if (typeof renderNotes === 'function') renderNotes(); } catch(e) { console.warn('renderNotes', e); }
+}
+
 (async () => {
   showLoadingOverlay(true);
   setFooterVisibility(false); // hide footer on the initial login page
   await loadData();
+  // Try to restore the previous session — if there's one, jump straight into the app.
+  const saved = restoreSession();
+  if (saved) {
+    currentUser = saved;
+    hideAllPages();
+    document.getElementById('app-page').style.display = 'block';
+    setFooterVisibility(true);
+    setupUI(); setGreeting();
+    renderAll();
+  }
   showLoadingOverlay(false);
 })();
 function showLoadingOverlay(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
@@ -2519,11 +2567,12 @@ async function doLogin() {
   }
   err.classList.remove('show');
   currentUser = found;
+  saveSession();
   hideAllPages();
   document.getElementById('app-page').style.display = 'block';
   setFooterVisibility(true);
-  setupUI(); setGreeting(); renderTodos(); renderCalendar();
-  if (currentUser.role === 'founder' || currentUser.role === 'admin') renderApplicants();
+  setupUI(); setGreeting();
+  renderAll();
 }
 
 document.addEventListener('keydown', e => {
@@ -2535,8 +2584,10 @@ document.addEventListener('keydown', e => {
 });
 
 function doLogout() {
+  clearSession();
   currentUser = null;
   hideAllPages();
+  setFooterVisibility(false);
   document.getElementById('login-page').style.display = 'flex';
   document.getElementById('username-input').value = '';
   document.getElementById('password-input').value = '';
@@ -2550,86 +2601,36 @@ function setupUI() {
   // Avatar in the nav: use uploaded image when available
   const navAv = document.getElementById('nav-avatar');
   const myAp = currentUser.applicantData;
-  if (myAp && myAp.avatar) { navAv.style.backgroundImage = `url(${myAp.avatar})`; navAv.style.backgroundSize='cover'; navAv.style.backgroundPosition='center'; navAv.textContent=''; }
-  else { navAv.style.backgroundImage = ''; navAv.textContent = currentUser.initials; }
+  const founderAv = isFounder
+    ? (currentUser.founderAvatar || (settings && settings.founderProfile && settings.founderProfile.avatar))
+    : null;
+  if (myAp && myAp.avatar) {
+    navAv.style.backgroundImage = `url(${myAp.avatar})`; navAv.style.backgroundSize='cover'; navAv.style.backgroundPosition='center'; navAv.textContent='';
+  } else if (founderAv) {
+    navAv.style.backgroundImage = `url(${founderAv})`; navAv.style.backgroundSize='cover'; navAv.style.backgroundPosition='center'; navAv.textContent='';
+  } else {
+    navAv.style.backgroundImage = ''; navAv.textContent = currentUser.initials;
+  }
   document.getElementById('nav-name').textContent   = currentUser.name;
   // Founders and admins both get full management tools
   document.getElementById('tab-hiring').style.display    = canManage ? '' : 'none';
-  document.getElementById('tab-members').style.display   = canManage ? '' : 'none';
+  // Members tab is now visible to everyone — staff get a read-only view (no manage buttons)
+  document.getElementById('tab-members').style.display   = '';
+  // Management actions on the Members page header are managers-only
+  const memActions = document.getElementById('members-page-actions');
+  if (memActions) memActions.style.display = canManage ? 'flex' : 'none';
+  const memSync = document.getElementById('members-page-sync');
+  if (memSync) memSync.style.display = canManage ? '' : 'none';
+  const memSubtitle = document.getElementById('members-page-subtitle');
+  if (memSubtitle) memSubtitle.textContent = canManage
+    ? 'Owner, admins, staff members, awaiting consent, and pending review.'
+    : 'Meet the team — owner, admins, and staff.';
   document.getElementById('ev-add-panel').style.display  = canManage ? '' : 'none';
   // The "+ New announcement" button is for managers only — everyone else can read
   const annBtn = document.getElementById('ann-new-btn');
   if (annBtn) annBtn.style.display = canManage ? '' : 'none';
   // Members can also create their own tasks now (to track personal work)
   document.getElementById('todo-new-btn').style.display = '';
-}
-
-// ─── TOUCH ID ───
-const TOUCH_ID_CRED_KEY = 'sc_touchid_credId';
-const TOUCH_ID_RP_ID    = location.hostname;
-const TOUCH_ID_USER_ID  = new Uint8Array([83,67,70,111,117,110,100,101,114]);
-
-async function checkTouchIDSupport() {
-  if (location.protocol !== 'https:' && location.hostname !== 'localhost') return;
-  if (!window.PublicKeyCredential) return;
-  document.getElementById('touchid-wrap').style.display = 'block';
-  const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(()=>false);
-  if (!available) document.getElementById('touchid-status').textContent = 'Touch ID not available on this device.';
-}
-checkTouchIDSupport();
-
-async function doTouchID() {
-  const statusEl = document.getElementById('touchid-status');
-  const btn      = document.getElementById('touchid-btn');
-  const storedId = localStorage.getItem(TOUCH_ID_CRED_KEY);
-  btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none';
-  statusEl.style.color = 'var(--ink-light)';
-  statusEl.textContent = storedId ? 'Waiting for Touch ID…' : 'Registering Touch ID…';
-  try {
-    if (!storedId) {
-      const regOptions = {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rp: { id: TOUCH_ID_RP_ID, name: 'School Civics' },
-        user: { id: TOUCH_ID_USER_ID, name: 'SC Founder', displayName: 'SC Founder' },
-        pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
-        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'preferred' },
-        timeout: 60000
-      };
-      const cred = await navigator.credentials.create({ publicKey: regOptions });
-      const credIdB64 = btoa(String.fromCharCode(...new Uint8Array(cred.rawId)));
-      localStorage.setItem(TOUCH_ID_CRED_KEY, credIdB64);
-      statusEl.style.color = 'var(--sage)'; statusEl.textContent = 'Touch ID set up — signing you in…';
-      setTimeout(() => loginAsFounder(), 700);
-    } else {
-      const rawCredId = Uint8Array.from(atob(storedId), c => c.charCodeAt(0));
-      await navigator.credentials.get({ publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        rpId: TOUCH_ID_RP_ID,
-        allowCredentials: [{ type: 'public-key', id: rawCredId, transports: ['internal'] }],
-        userVerification: 'required', timeout: 60000
-      }});
-      statusEl.style.color = 'var(--sage)'; statusEl.textContent = 'Verified.';
-      setTimeout(() => loginAsFounder(), 500);
-    }
-  } catch(err) {
-    btn.style.opacity = ''; btn.style.pointerEvents = '';
-    statusEl.style.color = 'var(--danger)';
-    if (err.name === 'NotAllowedError') statusEl.textContent = 'Touch ID cancelled or timed out.';
-    else if (err.name === 'InvalidStateError') { localStorage.removeItem(TOUCH_ID_CRED_KEY); statusEl.textContent = 'Credential reset — tap again.'; }
-    else statusEl.textContent = 'Error: ' + err.message;
-  }
-}
-
-function loginAsFounder() {
-  currentUser = { username: 'SC Founder', ...USERS['SC Founder'] };
-  document.getElementById('error-msg').classList.remove('show');
-  hideAllPages();
-  document.getElementById('app-page').style.display = 'block';
-  setFooterVisibility(true);
-  document.getElementById('touchid-status').textContent = '';
-  document.getElementById('touchid-btn').style.opacity = '';
-  document.getElementById('touchid-btn').style.pointerEvents = '';
-  setupUI(); setGreeting(); renderTodos(); renderCalendar(); renderApplicants();
 }
 
 // ─── NAV ───
@@ -3527,6 +3528,20 @@ function saveApplicant() {
 }
 function deleteApplicant(id) { applicants = applicants.filter(a => a.id !== id); save(); renderApplicants(); renderMembers(); }
 
+// Permanently delete a fired member's account. Only owner/admin can call this.
+function deleteFiredApplicant(id) {
+  const ap = applicants.find(a => a.id === id);
+  if (!ap) return;
+  if (!ap.fired) { alert('Only fired accounts can be deleted from here.'); return; }
+  if (!canSeeIds()) return;
+  const ok = confirm(`Permanently delete ${ap.name}'s account? This cannot be undone.\n\nThey will lose access to the staff portal and their record will be removed.`);
+  if (!ok) return;
+  applicants = applicants.filter(a => a.id !== id);
+  save();
+  renderApplicants();
+  renderMembers();
+}
+
 function renderApplicants() {
   const list  = document.getElementById('hiring-list');
   const empty = document.getElementById('hiring-empty');
@@ -3577,22 +3592,33 @@ function applicantCardEl(ap, opts={}) {
     const denied = ap.status === 'Denied';
     const hasRole = !!ap.roleId;
     const pinned = !!ap.isPinned;
-    const lockedAttr = denied ? 'disabled style="opacity:.35;cursor:not-allowed;"' : '';
-    const lockedTitle = denied ? ' title="Locked — applicant is denied"' : '';
-    // Pin button: only enabled if not denied AND has a role
-    const pinDisabled = denied || !hasRole;
-    const pinAttr = pinDisabled ? 'disabled style="opacity:.35;cursor:not-allowed;"' : '';
-    const pinTitle = denied ? ' title="Locked — applicant is denied"'
-                    : (!hasRole ? ' title="Assign a role first to pin"'
-                    : (pinned ? ' title="Unpin"' : ' title="Pin to top of Members"'));
-    const pinHandler = pinDisabled ? '' : `onclick="togglePin(${apId})"`;
-    actions = `<div class="ap-btns">
-      <button class="ap-btn ${pinned ? 'pinned' : ''}" ${pinAttr}${pinTitle} ${pinHandler}><svg class="ic"><use href="#i-pin"/></svg></button>
-      <button class="ap-btn" ${denied ? lockedAttr + lockedTitle : `title="Assign role" onclick="openRoleAssignModal(${apId})"`}><svg class="ic"><use href="#i-shield"/></svg></button>
-      <button class="ap-btn" ${denied ? lockedAttr + lockedTitle : `title="${ap.isAdmin ? 'Demote from admin' : 'Promote to admin'}" onclick="toggleAdmin(${apId})"`}><svg class="ic"><use href="#i-${ap.isAdmin ? 'arrow-left' : 'arrow'}"/></svg></button>
-      <button class="ap-btn" title="Edit" onclick="openApplicantModal(${apId})"><svg class="ic"><use href="#i-edit"/></svg></button>
-      <button class="ap-btn fire" title="Remove" onclick="openFireModal(${apId})"><svg class="ic"><use href="#i-trash"/></svg></button>
-    </div>`;
+    const isFired = !!ap.fired;
+    // Staff see member cards but with no management buttons
+    if (!canSeeIds()) {
+      actions = '';
+    } else if (isFired) {
+      // Fired member — only owner/admin can permanently delete the account
+      actions = `<div class="ap-btns">
+        <button class="ap-btn del" title="Permanently delete this fired account" onclick="deleteFiredApplicant(${apId})"><svg class="ic"><use href="#i-trash"/></svg></button>
+      </div>`;
+    } else {
+      const lockedAttr = denied ? 'disabled style="opacity:.35;cursor:not-allowed;"' : '';
+      const lockedTitle = denied ? ' title="Locked — applicant is denied"' : '';
+      // Pin button: only enabled if not denied AND has a role
+      const pinDisabled = denied || !hasRole;
+      const pinAttr = pinDisabled ? 'disabled style="opacity:.35;cursor:not-allowed;"' : '';
+      const pinTitle = denied ? ' title="Locked — applicant is denied"'
+                      : (!hasRole ? ' title="Assign a role first to pin"'
+                      : (pinned ? ' title="Unpin"' : ' title="Pin to top of Members"'));
+      const pinHandler = pinDisabled ? '' : `onclick="togglePin(${apId})"`;
+      actions = `<div class="ap-btns">
+        <button class="ap-btn ${pinned ? 'pinned' : ''}" ${pinAttr}${pinTitle} ${pinHandler}><svg class="ic"><use href="#i-pin"/></svg></button>
+        <button class="ap-btn" ${denied ? lockedAttr + lockedTitle : `title="Assign role" onclick="openRoleAssignModal(${apId})"`}><svg class="ic"><use href="#i-shield"/></svg></button>
+        <button class="ap-btn" ${denied ? lockedAttr + lockedTitle : `title="${ap.isAdmin ? 'Demote from admin' : 'Promote to admin'}" onclick="toggleAdmin(${apId})"`}><svg class="ic"><use href="#i-${ap.isAdmin ? 'arrow-left' : 'arrow'}"/></svg></button>
+        <button class="ap-btn" title="Edit" onclick="openApplicantModal(${apId})"><svg class="ic"><use href="#i-edit"/></svg></button>
+        <button class="ap-btn fire" title="Remove" onclick="openFireModal(${apId})"><svg class="ic"><use href="#i-trash"/></svg></button>
+      </div>`;
+    }
   } else {
     const apId = ap.id;
     actions = `<div class="ap-btns">
@@ -3890,6 +3916,9 @@ function renderMembers() {
       }
     }
     targetEl.appendChild(sStaff);
+    // The Awaiting / Declined / Pending / Fired sections are admin/owner-only —
+    // staff just see the active team above this point.
+    if (!canSeeIds()) return;
     // Awaiting consent (founder/admin is waiting on the applicant to respond)
     const sAwait = document.createElement('div'); sAwait.className = 'member-section';
     sAwait.innerHTML = `<div class="member-section-head"><svg class="ic"><use href="#i-mail"/></svg> Awaiting their response <span class="count">${awaitingList.length}</span></div>`;
@@ -4644,12 +4673,16 @@ function renderProfilePage() {
   }
   document.getElementById('profile-password-wrap').style.display = 'none';
 
-  // Avatar preview
+  // Avatar preview — applicants use their applicant record; founder uses settings.founderProfile.avatar
   const preview = document.getElementById('profile-avatar-preview');
   const myAp = currentUser.applicantData;
+  const founderAv = isFndr
+    ? (currentUser.founderAvatar || (settings && settings.founderProfile && settings.founderProfile.avatar))
+    : null;
+  const avatarUrl = (myAp && myAp.avatar) ? myAp.avatar : (founderAv || null);
   pendingProfileAvatarDataUrl = null;
-  if (myAp && myAp.avatar) {
-    preview.style.backgroundImage = `url(${myAp.avatar})`;
+  if (avatarUrl) {
+    preview.style.backgroundImage = `url(${avatarUrl})`;
     preview.style.borderStyle = 'solid';
     preview.style.borderColor = 'var(--accent)';
     preview.textContent = '';
@@ -4690,24 +4723,29 @@ function removeProfileAvatar() {
   preview.style.borderColor = 'var(--border)';
   preview.textContent = currentUser.initials || '??';
   document.getElementById('profile-avatar-remove-btn').style.display = 'none';
+  // Surface a hint that nothing has been saved yet
+  const note = document.getElementById('profile-avatar-note');
+  if (note) note.textContent = 'Click "Save changes" below to confirm removing your picture.';
 }
 async function saveProfile() {
   const name = document.getElementById('profile-name-input').value.trim();
-  const newPass = document.getElementById('profile-password-input').value;
   if (!name) { document.getElementById('profile-name-input').focus(); return; }
-  // Update underlying applicant record (or USERS for founder, in-memory only)
   if (currentUser.role === 'founder') {
+    // Persist founder profile in `settings.founderProfile` so it survives reloads.
+    if (!settings) settings = {};
+    if (!settings.founderProfile) settings.founderProfile = {};
+    settings.founderProfile.name = name;
+    if (pendingProfileAvatarDataUrl === '__CLEAR__') settings.founderProfile.avatar = null;
+    else if (pendingProfileAvatarDataUrl) settings.founderProfile.avatar = pendingProfileAvatarDataUrl;
+    // Reflect the change on the in-memory USERS + currentUser so nav/UI updates immediately
     USERS['SC Founder'].name = name;
     currentUser.name = name;
-    // Founder avatar is stored on currentUser only (no applicant record)
-    if (pendingProfileAvatarDataUrl === '__CLEAR__') currentUser.founderAvatar = null;
-    else if (pendingProfileAvatarDataUrl) currentUser.founderAvatar = pendingProfileAvatarDataUrl;
+    currentUser.initials = name.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    currentUser.founderAvatar = settings.founderProfile.avatar || null;
   } else {
     const ap = applicants.find(a => a.id === currentUser.applicantId);
     if (ap) {
       ap.name = name;
-      // Password is owner-only: applicants cannot change their passcode from here.
-      // (Even if the field is somehow uncovered via devtools, we ignore the value.)
       if (pendingProfileAvatarDataUrl === '__CLEAR__') ap.avatar = null;
       else if (pendingProfileAvatarDataUrl) ap.avatar = pendingProfileAvatarDataUrl;
       currentUser.name = name;
@@ -4716,10 +4754,17 @@ async function saveProfile() {
     }
   }
   await save();
-  // Refresh nav avatar/name
+  // Update the saved session so a refresh keeps the new name/initials.
+  saveSession();
+  // Refresh nav avatar/name + the profile page itself
   setupUI();
+  renderProfilePage();
   document.getElementById('profile-saved-note').style.display = 'block';
   pendingProfileAvatarDataUrl = null;
+  setTimeout(() => {
+    const note = document.getElementById('profile-saved-note');
+    if (note) note.style.display = 'none';
+  }, 2400);
 }
 
 // ─── FIRE NOTICE (forced popup shown when a fired user tries to sign in) ───

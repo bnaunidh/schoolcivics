@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>School Civics — Hands-on civics lessons for curious kids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #15225a;
+    --navy-deep: #0f1842;
+    --cream: #fdf6e3;
+    --cream-2: #f7e9c4;
+    --parchment: #fdf6e3;
+    --red: #c8262e;
+    --red-bright: #e94f4f;
+    --red-deep: #a81e25;
+    --blue: #2952b3;
+    --blue-deep: #1d3a8c;
+    --gold: #e6b94d;
+    --gold-deep: #b08727;
+    --teal: #2bb9a8;
+    --green: #5cc46a;
+    --pink: #ff7eb3;
+    --ink: #1a1d36;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, .display { font-family: 'Fredoka', 'Nunito', sans-serif; letter-spacing: -0.01em; }
+  .serif { font-family: 'Playfair Display', Georgia, serif; }
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .ic { width: 1em; height: 1em; display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+
+  /* ---------- BUNTING (triangle flag banner) ---------- */
+  .bunting {
+    display: flex; justify-content: center; align-items: flex-start;
+    gap: 4px; padding: 6px 0 0;
+    background: var(--navy);
+    border-bottom: 3px solid var(--gold);
+    overflow: hidden;
+  }
+  .bunting-flag {
+    width: 26px; height: 32px;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  }
+  .bunting-flag.r { background: var(--red); }
+  .bunting-flag.w { background: var(--cream); }
+  .bunting-flag.b { background: var(--blue); }
+  .bunting-flag.g { background: var(--gold); }
+
+  /* ---------- Top nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--cream);
+    border-bottom: 3px solid var(--gold);
+    box-shadow: 0 2px 0 var(--navy);
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 28px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 22px;
+    color: var(--navy);
+  }
+  .logo .name-stack { line-height: 1; }
+  .logo .name-stack .top { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 20px; letter-spacing: 0.02em; }
+  .logo .name-stack .bot { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 11px; color: var(--gold-deep); letter-spacing: 0.18em; text-transform: uppercase; }
+
+  /* Logo mark — clean navy square with star */
+  .seal-logo {
+    width: 42px; height: 42px; border-radius: 11px;
+    background: var(--navy);
+    display: grid; place-items: center;
+    color: var(--gold);
+  }
+  .seal-logo .ic { width: 22px; height: 22px; }
+
+  .nav-links { display: flex; gap: 22px; font-weight: 700; color: #4a4f74; }
+  .nav-links a:hover { color: var(--red); }
+  .nav-cta { margin-left: auto; display: flex; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'Fredoka', sans-serif; font-weight: 600;
+    border: 3px solid var(--navy);
+    border-radius: 999px;
+    padding: 10px 20px; font-size: 15px;
+    background: #fff; color: var(--navy);
+    box-shadow: 3px 3px 0 var(--navy);
+    cursor: pointer; transition: transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--navy); }
+  .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--navy); }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn .ic { width: 16px; height: 16px; }
+
+  /* Clean eyebrow (replaces star-strip on most sections) */
+  .eyebrow-clean {
+    display: inline-block;
+    font-family: 'Fredoka', sans-serif; font-weight: 600;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  /* ---------- Star strip ---------- */
+  .star-strip {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--gold-deep);
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  .star-strip .ic { width: 12px; height: 12px; color: var(--red); }
+  .star-strip .ic.gold { color: var(--gold); }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; overflow: hidden;
+    padding: 50px 24px 100px;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 20%, #ffe4a8 0%, transparent 60%),
+      radial-gradient(ellipse 50% 70% at 10% 80%, #ffd0d0 0%, transparent 60%),
+      var(--cream);
+  }
+  /* Subtle star field on hero */
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(21,34,90,0.08) 1.5px, transparent 1.5px);
+    background-size: 40px 40px;
+    background-position: 0 0;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 50px; align-items: center;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5.4vw, 72px);
+    font-weight: 900;
+    line-height: 1.0;
+    color: var(--navy);
+    margin: 16px 0 18px;
+  }
+  .hero h1 em { color: var(--red); font-style: italic; font-weight: 900; }
+  .hero p.lead {
+    font-size: 19px; color: #3a3f63; max-width: 520px; margin-bottom: 28px;
+  }
+  .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-stats {
+    display: flex; gap: 28px; margin-top: 36px;
+    padding-top: 24px; border-top: 2px dashed var(--gold-deep);
+  }
+  .stat .num {
+    font-family: 'Playfair Display', serif; font-size: 32px; color: var(--navy); font-weight: 900;
+  }
+  .stat .lbl { font-size: 12px; color: #6a6f8c; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* Hero illustration card stack */
+  .hero-art { position: relative; height: 510px; }
+  .card-stack { position: absolute; inset: 0; }
+  .float-card {
+    position: absolute;
+    border: 4px solid var(--navy); border-radius: 22px;
+    background: #fff; box-shadow: 8px 8px 0 var(--navy);
+    padding: 22px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .float-card .badge {
+    align-self: flex-start;
+    font-family: 'Fredoka', sans-serif; font-size: 12px; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
+    background: var(--navy); color: var(--gold);
+  }
+  .float-card h4 { font-family: 'Fredoka', sans-serif; font-size: 19px; margin: 4px 0 0; color: var(--navy); }
+  .float-card p { font-size: 14px; color: #555a7a; margin: 0; }
+  .fc-1 { top: 0; left: 0; width: 270px; background: #fff; transform: rotate(-5deg); }
+  .fc-2 { top: 90px; right: 0; width: 250px; background: #d8edff; transform: rotate(4deg); }
+  .fc-3 { bottom: 80px; left: 40px; width: 280px; background: #ffe7d6; transform: rotate(-2deg); }
+
+  /* Eagle mascot */
+  .mascot {
+    position: absolute;
+    right: -10px; bottom: -10px;
+    width: 170px; height: 170px;
+    z-index: 6;
+    filter: drop-shadow(4px 4px 0 var(--navy));
+  }
+  .mascot-banner {
+    position: absolute;
+    right: 130px; bottom: 110px;
+    background: var(--cream);
+    border: 3px solid var(--navy);
+    box-shadow: 3px 3px 0 var(--navy);
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-family: 'Fredoka'; font-weight: 700; color: var(--navy); font-size: 14px;
+    z-index: 7;
+    transform: rotate(-4deg);
+  }
+  .mascot-banner::after {
+    content: ''; position: absolute; right: -10px; bottom: 8px;
+    border: 8px solid transparent;
+    border-left-color: var(--cream);
+  }
+
+  .icon-circle {
+    width: 48px; height: 48px; border-radius: 14px;
+    display: grid; place-items: center;
+    border: 3px solid var(--navy); margin-bottom: 4px;
+  }
+  .icon-circle .ic { width: 26px; height: 26px; }
+  .ic-red { background: var(--red); color: #fff; }
+  .ic-blue { background: var(--blue); color: #fff; }
+  .ic-gold { background: var(--gold); color: var(--navy); }
+
+  /* ---------- Section base ---------- */
+  section { padding: 80px 24px; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .section-head { text-align: center; margin-bottom: 50px; }
+  .section-head .star-strip { margin-bottom: 12px; }
+  .section-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 3.8vw, 50px);
+    font-weight: 900;
+    color: var(--navy); margin: 6px 0 10px;
+  }
+  .section-head p { color: #4a4f74; font-size: 17px; max-width: 620px; margin: 0 auto; }
+
+  /* ---------- WHY CIVICS ---------- */
+  .why-civics {
+    background: #fff;
+    border-top: 3px solid var(--border);
+    border-bottom: 3px solid var(--border);
+    padding: 80px 24px;
+  }
+  .why-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+  .why-civics h2 {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: clamp(36px, 4.5vw, 52px); color: var(--navy);
+    margin: 0 0 16px;
+  }
+  .why-lead {
+    font-size: 19px; color: var(--ink-muted, #4a4f74); line-height: 1.6;
+  }
+
+  /* ---------- (legacy) MISSION ---------- */
+  .mission {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(ellipse 60% 100% at 50% 50%, #fff8e0 0%, var(--parchment) 70%);
+    border-top: 4px solid var(--navy);
+    border-bottom: 4px solid var(--navy);
+    padding: 90px 24px;
+  }
+  /* Faded star pattern in mission */
+  .mission .stars-bg {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 10% 20%, var(--gold) 2px, transparent 3px),
+      radial-gradient(circle at 90% 30%, var(--gold) 2px, transparent 3px),
+      radial-gradient(circle at 30% 80%, var(--gold) 2px, transparent 3px),
+      radial-gradient(circle at 70% 90%, var(--gold) 2px, transparent 3px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+  .mission-inner {
+    max-width: 920px; margin: 0 auto; text-align: center; position: relative;
+  }
+  .mission .scroll-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--navy); color: var(--gold);
+    padding: 8px 18px; border-radius: 999px;
+    font-family: 'Fredoka'; font-weight: 600; font-size: 12px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    border: 2px solid var(--gold);
+    margin-bottom: 22px;
+  }
+  .mission .scroll-tag .ic { width: 14px; height: 14px; }
+  .mission h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 5vw, 60px); color: var(--navy);
+    margin: 0 0 24px; font-weight: 900; line-height: 1;
+  }
+  .mission .pledge {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 2vw, 22px); color: #3a3f63; max-width: 720px;
+    margin: 0 auto 32px;
+    font-style: italic; line-height: 1.5;
+  }
+  .mission .pledge .quote { color: var(--gold-deep); font-size: 1.4em; vertical-align: -0.2em; }
+  .mission .signature {
+    display: inline-flex; gap: 24px; align-items: center;
+    background: rgba(255, 255, 255, 0.55);
+    padding: 18px 28px; border-radius: 18px;
+    border: 2px dashed var(--gold-deep);
+  }
+  .mission .signature .seal-medallion {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--gold); border: 4px solid var(--navy);
+    box-shadow: 4px 4px 0 var(--navy);
+    display: grid; place-items: center;
+    color: var(--navy); position: relative;
+    flex-shrink: 0;
+  }
+  .mission .signature .seal-medallion::before {
+    content: ''; position: absolute; inset: 6px;
+    border: 2px dashed var(--navy); border-radius: 50%;
+  }
+  .mission .signature .seal-medallion .ic { width: 40px; height: 40px; z-index: 1; }
+  .mission .signature .est { text-align: left; }
+  .mission .signature .est .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 900; color: var(--navy); line-height: 1;
+  }
+  .mission .signature .est .lbl {
+    font-family: 'Fredoka';
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #6a6f8c; margin-top: 4px;
+  }
+
+  /* ---------- Topics row ---------- */
+  .topics {
+    background: #fff;
+    border-top: 4px solid var(--navy);
+    border-bottom: 4px solid var(--navy);
+  }
+  .topic-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  }
+  .topic {
+    border: 3px solid var(--navy); border-radius: 20px;
+    padding: 24px; background: var(--cream);
+    box-shadow: 5px 5px 0 var(--navy);
+    transition: transform .1s ease, box-shadow .1s ease;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  .topic:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--navy); }
+  .topic .icon-circle { width: 56px; height: 56px; margin: 6px 0 12px; }
+  .topic .icon-circle .ic { width: 30px; height: 30px; }
+  .topic h3 { margin: 0 0 6px; color: var(--navy); font-size: 20px; font-family: 'Fredoka'; }
+  .topic p { margin: 0; color: #555a7a; font-size: 14px; }
+
+  /* ---------- Lesson grid ---------- */
+  .lessons-section {
+    background:
+      radial-gradient(ellipse 70% 50% at 90% 10%, #ffe1e1 0%, transparent 60%),
+      var(--cream);
+  }
+  .lesson-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;
+  }
+  .lesson-card {
+    background: #fff;
+    border: 3px solid var(--navy); border-radius: 22px;
+    overflow: hidden; box-shadow: 6px 6px 0 var(--navy);
+    transition: transform .12s ease, box-shadow .12s ease;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .lesson-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--navy); }
+  .lesson-thumb {
+    aspect-ratio: 16/10; position: relative; overflow: hidden;
+    border-bottom: 3px solid var(--navy);
+  }
+  .lesson-thumb .play {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: rgba(20, 26, 61, 0.0);
+    transition: background .15s ease;
+  }
+  .lesson-card:hover .play { background: rgba(20, 26, 61, 0.18); }
+  .play-btn {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #fff; border: 3px solid var(--navy);
+    display: grid; place-items: center;
+    box-shadow: 4px 4px 0 var(--navy);
+    color: var(--navy);
+    transform: scale(0.8); opacity: 0;
+    transition: transform .15s ease, opacity .15s ease;
+  }
+  .play-btn .ic { width: 24px; height: 24px; margin-left: 3px; }
+  .lesson-card:hover .play-btn { transform: scale(1); opacity: 1; }
+
+  /* OFFICIAL stamp */
+  .stamp {
+    position: absolute; top: 14px; right: 14px;
+    width: 78px; height: 78px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    border: 3px dashed var(--red);
+    display: grid; place-items: center;
+    text-align: center; line-height: 1;
+    font-family: 'Playfair Display', serif; font-weight: 800; font-size: 9px;
+    color: var(--red); letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transform: rotate(-12deg);
+    padding: 8px;
+    z-index: 5;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.5);
+  }
+  .stamp .lg { font-size: 11px; margin: 3px 0; font-weight: 900; color: var(--red-deep); }
+  .stamp .ic { width: 10px; height: 10px; color: var(--red); }
+
+  .lesson-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+  .lesson-meta {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 10px;
+    font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+    color: #6a6f8c;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--cream-2); color: var(--navy);
+    padding: 4px 10px; border-radius: 999px;
+    border: 2px solid var(--navy);
+  }
+  .pill .ic { width: 12px; height: 12px; }
+  .pill.featured { background: var(--gold); }
+  .lesson-body h3 { font-size: 22px; color: var(--navy); margin: 0 0 8px; font-family: 'Fredoka'; }
+  .lesson-body p { color: #555a7a; font-size: 15px; margin: 0 0 18px; flex: 1; }
+  .lesson-foot { display: flex; justify-content: space-between; align-items: center; }
+  .lesson-foot .small { font-size: 13px; color: #6a6f8c; font-weight: 700; }
+  .lesson-foot .arrow {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--red); color: #fff;
+    border: 3px solid var(--navy);
+    display: grid; place-items: center;
+    box-shadow: 2px 2px 0 var(--navy);
+  }
+  .lesson-foot .arrow .ic { width: 18px; height: 18px; }
+
+  /* Lesson thumb illustrations */
+  .thumb-branches {
+    background: linear-gradient(135deg, #ffe7c2 0%, #ffd0a8 100%);
+    display: flex; align-items: flex-end; justify-content: center; padding: 18px;
+    gap: 14px;
+  }
+  .pillar { background: #fff; border: 3px solid var(--navy); border-radius: 8px 8px 0 0; box-shadow: 3px -3px 0 var(--navy); position: relative; }
+  .pillar.p1 { width: 60px; height: 100px; background: var(--red); }
+  .pillar.p2 { width: 60px; height: 130px; background: var(--blue); }
+  .pillar.p3 { width: 60px; height: 110px; background: var(--gold); }
+  .pillar::before {
+    content: ''; position: absolute; top: -8px; left: -8px; right: -8px;
+    height: 12px; background: var(--navy); border-radius: 4px;
+  }
+
+  .thumb-constitution {
+    background: linear-gradient(135deg, #e0eaff 0%, #b8c8f0 100%);
+    display: grid; place-items: center;
+  }
+  .scroll-art {
+    width: 65%; height: 70%; background: #fff;
+    border: 3px solid var(--navy); border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--navy);
+    padding: 14px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .scroll-art .line { height: 6px; background: #e6e0d0; border-radius: 3px; }
+  .scroll-art .line.short { width: 60%; }
+  .scroll-art .seal-circ { width: 28px; height: 28px; border-radius: 50%; background: var(--red); border: 2px solid var(--navy); margin-top: auto; align-self: flex-end; }
+
+  .thumb-vote {
+    background: linear-gradient(135deg, #d4f0e0 0%, #a8dec0 100%);
+    display: grid; place-items: center;
+  }
+  .ballot-box {
+    width: 130px; height: 100px; background: #fff;
+    border: 3px solid var(--navy); border-radius: 10px;
+    box-shadow: 4px 4px 0 var(--navy); position: relative;
+  }
+  .ballot-box::before {
+    content: ''; position: absolute; top: 18px; left: 28%; width: 44%; height: 6px;
+    background: var(--navy); border-radius: 3px;
+  }
+  .ballot-paper {
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%) rotate(-6deg);
+    width: 52px; height: 36px; background: #fff;
+    border: 3px solid var(--navy); border-radius: 4px;
+    display: grid; place-items: center;
+    color: var(--red);
+  }
+  .ballot-paper .ic { width: 22px; height: 22px; }
+
+  .thumb-rights {
+    background: linear-gradient(135deg, #ffd6e8 0%, #ffaccc 100%);
+    display: grid; place-items: center;
+  }
+  .torch {
+    width: 50px; height: 130px; background: var(--gold);
+    border: 3px solid var(--navy); border-radius: 8px 8px 4px 4px;
+    position: relative;
+  }
+  .flame {
+    position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 60px; background: var(--red);
+    border: 3px solid var(--navy);
+    border-radius: 50% 0 50% 50%;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .thumb-courts {
+    background: linear-gradient(135deg, #efe0ff 0%, #c9b0f0 100%);
+    display: grid; place-items: center;
+  }
+  .gavel-art {
+    width: 120px; height: 30px; background: #8b4513;
+    border: 3px solid var(--navy); border-radius: 6px;
+    box-shadow: 4px 4px 0 var(--navy);
+    position: relative; transform: rotate(-15deg);
+  }
+  .gavel-art::before {
+    content: ''; position: absolute; left: -14px; top: -22px;
+    width: 50px; height: 70px; background: #a0522d;
+    border: 3px solid var(--navy); border-radius: 6px;
+  }
+  .gavel-block {
+    position: absolute; bottom: -36px; right: 0;
+    width: 90px; height: 14px; background: var(--gold);
+    border: 3px solid var(--navy); border-radius: 4px;
+  }
+
+  .thumb-citizen {
+    background: linear-gradient(135deg, #ffeac2 0%, #ffce7a 100%);
+    display: grid; place-items: center;
+  }
+  .person {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--blue); border: 3px solid var(--navy);
+    position: relative; box-shadow: 4px 4px 0 var(--navy);
+  }
+  .person::before {
+    content: ''; position: absolute; bottom: -50px; left: -20px;
+    width: 120px; height: 60px; background: var(--red);
+    border: 3px solid var(--navy);
+    border-radius: 60px 60px 8px 8px;
+  }
+
+  /* ---------- How it works ---------- */
+  .how {
+    background: var(--navy); color: #fff;
+    position: relative; overflow: hidden;
+  }
+  /* Stars in the navy field, like the flag */
+  .how::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(230,185,77,0.35) 1.5px, transparent 2px);
+    background-size: 50px 50px;
+    background-position: 12px 12px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .how .container { position: relative; }
+  .how .section-head h2 { color: #fff; }
+  .how .section-head p { color: #c8cdf0; }
+  .how .star-strip { color: var(--gold); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .step {
+    background: #1f2d70; border: 3px solid var(--gold); border-radius: 22px;
+    padding: 28px; box-shadow: 6px 6px 0 var(--gold-deep);
+  }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--gold); color: var(--navy);
+    font-family: 'Playfair Display', serif; font-weight: 900; font-size: 28px;
+    display: grid; place-items: center;
+    border: 3px solid #fff;
+    margin-bottom: 16px;
+    box-shadow: 0 0 0 3px var(--navy);
+  }
+  .step h3 { margin: 0 0 8px; font-size: 22px; color: #fff; font-family: 'Fredoka'; }
+  .step p { margin: 0; color: #c8cdf0; font-size: 15px; }
+
+  /* ---------- Teacher CTA ---------- */
+  .teacher { background: linear-gradient(135deg, var(--cream-2) 0%, var(--cream) 100%); }
+  .teacher-inner {
+    max-width: 1100px; margin: 0 auto;
+    background: #fff;
+    border: 4px solid var(--navy); border-radius: 28px;
+    box-shadow: 10px 10px 0 var(--navy);
+    padding: 50px;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .teacher h2 { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--navy); margin: 0 0 12px; font-weight: 900; }
+  .teacher p { color: #4a4f74; font-size: 17px; margin: 0 0 24px; }
+  .check-list { list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 10px; }
+  .check-list li { display: flex; gap: 10px; align-items: center; font-weight: 700; color: var(--navy); }
+  .check-list li .check-mark {
+    width: 26px; height: 26px;
+    background: var(--green); color: #fff;
+    border: 2px solid var(--navy); border-radius: 50%;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .check-list li .check-mark .ic { width: 14px; height: 14px; }
+  .teacher-art {
+    background: var(--cream-2);
+    border: 3px solid var(--navy); border-radius: 22px;
+    box-shadow: 6px 6px 0 var(--navy);
+    padding: 36px 32px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .teacher-art .quote-mark {
+    font-family: 'Playfair Display', serif; font-weight: 900;
+    font-size: 80px; color: var(--red); line-height: 0.7;
+    margin-bottom: 12px;
+  }
+  .teacher-art .quote-text {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+    font-size: 22px; color: var(--navy); line-height: 1.4;
+    margin-bottom: 14px;
+  }
+  .teacher-art .quote-attr {
+    font-family: 'Fredoka'; font-weight: 600;
+    font-size: 13px; color: var(--ink-muted, #4a4f74);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: var(--navy-deep); color: #c8cdf0;
+    padding: 0 0 30px;
+    border-top: 6px solid var(--gold);
+    position: relative;
+  }
+  .foot-inner {
+    max-width: 1200px; margin: 0 auto;
+    padding: 50px 24px 0;
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px;
+  }
+  footer h4 { color: var(--gold); font-family: 'Playfair Display'; font-weight: 800; font-size: 14px; margin: 0 0 14px; letter-spacing: 0.1em; text-transform: uppercase; }
+  footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: 14px; }
+  footer ul a:hover { color: var(--gold); }
+  .foot-bottom {
+    max-width: 1200px; margin: 30px auto 0; padding: 20px 24px 0;
+    border-top: 1px solid #2a356b;
+    display: flex; justify-content: space-between; font-size: 13px; flex-wrap: wrap; gap: 12px;
+  }
+  .foot-logo { display: flex; align-items: center; gap: 10px; color: #fff; font-family: 'Playfair Display'; font-size: 22px; font-weight: 900; margin-bottom: 12px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-art { height: 420px; margin-top: 20px; }
+    .topic-grid { grid-template-columns: repeat(2, 1fr); }
+    .lesson-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: 1fr; }
+    .teacher-inner { grid-template-columns: 1fr; padding: 30px; }
+    .foot-inner { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    .lesson-grid { grid-template-columns: 1fr; }
+    .topic-grid { grid-template-columns: 1fr; }
+    section { padding: 60px 20px; }
+    .hero { padding: 30px 20px 60px; }
+    .teacher-inner { padding: 24px; }
+    .foot-inner { grid-template-columns: 1fr; }
+    .mascot { width: 130px; height: 130px; }
+    .mascot-banner { right: 100px; bottom: 90px; font-size: 12px; }
+    .mission { padding: 60px 20px; }
+    .mission .signature { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ICON SPRITE ============ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-star" viewBox="0 0 24 24">
+      <polygon points="12,2 14.85,9.27 22.5,9.74 16.6,14.55 18.59,22 12,17.77 5.41,22 7.4,14.55 1.5,9.74 9.15,9.27" fill="currentColor" stroke="currentColor" stroke-width="0.5" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-scales" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="3" x2="12" y2="21"/>
+        <line x1="6" y1="21" x2="18" y2="21"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <circle cx="12" cy="3" r="1.2" fill="currentColor"/>
+        <path d="M5 6 L2 13 L8 13 Z" fill="currentColor" fill-opacity="0.25"/>
+        <path d="M19 6 L16 13 L22 13 Z" fill="currentColor" fill-opacity="0.25"/>
+      </g>
+    </symbol>
+    <symbol id="i-capitol" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12 C3 7 7 3 12 3 C17 3 21 7 21 12"/>
+        <line x1="2.5" y1="12" x2="21.5" y2="12"/>
+        <line x1="3" y1="21" x2="21" y2="21"/>
+        <line x1="6" y1="12" x2="6" y2="21"/>
+        <line x1="10" y1="12" x2="10" y2="21"/>
+        <line x1="14" y1="12" x2="14" y2="21"/>
+        <line x1="18" y1="12" x2="18" y2="21"/>
+        <line x1="12" y1="3" x2="12" y2="1.5"/>
+        <circle cx="12" cy="1.2" r="0.7" fill="currentColor"/>
+      </g>
+    </symbol>
+    <symbol id="i-whitehouse" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="1" x2="12" y2="6"/>
+        <path d="M12 1.5 L16 1.5 L16 4.5 L12 4.5" fill="currentColor"/>
+        <path d="M3 11 L12 5 L21 11"/>
+        <path d="M5 11 L5 21 L19 21 L19 11"/>
+        <rect x="10" y="15" width="4" height="6"/>
+      </g>
+    </symbol>
+    <symbol id="i-scroll" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 5 C5 3.5 6 2.5 7.5 2.5 L18 2.5 C19.5 2.5 20.5 3.5 20.5 5 L20.5 7 L17 7"/>
+        <path d="M5 5 L5 19 C5 20.5 6 21.5 7.5 21.5 L17 21.5 C15.5 21.5 14.5 20.5 14.5 19 L14.5 7 L5 7"/>
+        <line x1="7" y1="11" x2="12.5" y2="11"/>
+        <line x1="7" y1="15" x2="12.5" y2="15"/>
+      </g>
+    </symbol>
+    <symbol id="i-ballot" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="10" width="18" height="11" rx="1.5"/>
+        <line x1="8" y1="14" x2="16" y2="14"/>
+        <rect x="9" y="2" width="7" height="6"/>
+        <polyline points="10.5,4.8 12,6.2 14.5,3.2"/>
+      </g>
+    </symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2 L4 5 L4 12 C4 17 7.5 21 12 22 C16.5 21 20 17 20 12 L20 5 Z"/>
+        <polyline points="8.5,12 11,14.5 15.5,9.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-gavel" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="6" width="9" height="5" rx="0.6" transform="rotate(-30 6.5 8.5)" fill="currentColor" fill-opacity="0.18"/>
+        <line x1="11" y1="11" x2="20" y2="20" stroke-width="2.4"/>
+        <line x1="13" y1="22" x2="22" y2="22" stroke-width="3"/>
+      </g>
+    </symbol>
+    <symbol id="i-people" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="7" r="3"/>
+        <path d="M3 21 L3 19 C3 16 5.5 14 9 14 C12.5 14 15 16 15 19 L15 21"/>
+        <circle cx="17" cy="9" r="2"/>
+        <path d="M15 21 L15 20 C15 18 16 16.5 18 16.5 C20 16.5 21 18 21 20 L21 21"/>
+      </g>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <polygon points="7,4 7,20 21,12" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="3" x2="4" y2="22"/>
+        <rect x="4" y="3" width="16" height="11"/>
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="4" y1="9" x2="20" y2="9"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+        <rect x="4" y="3" width="7" height="5" fill="currentColor" fill-opacity="0.45"/>
+      </g>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24">
+      <polyline points="5,12 10,17 19,7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/>
+        <polyline points="13,6 19,12 13,18"/>
+      </g>
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 18 C6 11 8 5 12 5 C16 5 18 11 18 18 Z" fill="currentColor" fill-opacity="0.18"/>
+        <line x1="4" y1="18" x2="20" y2="18"/>
+        <line x1="12" y1="2.5" x2="12" y2="5"/>
+        <circle cx="12" cy="20.5" r="1.2" fill="currentColor"/>
+        <line x1="9" y1="11" x2="15" y2="11" stroke-width="1.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-courthouse" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="2,9 12,3 22,9" fill="currentColor" fill-opacity="0.15"/>
+        <line x1="2" y1="9" x2="22" y2="9"/>
+        <line x1="2" y1="21" x2="22" y2="21"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+        <line x1="6" y1="9" x2="6" y2="18"/>
+        <line x1="10" y1="9" x2="10" y2="18"/>
+        <line x1="14" y1="9" x2="14" y2="18"/>
+        <line x1="18" y1="9" x2="18" y2="18"/>
+      </g>
+    </symbol>
+    <!-- Cute Eagle mascot - intended to be used at large size -->
+    <symbol id="i-eagle" viewBox="0 0 120 120">
+      <!-- wings (back) -->
+      <path d="M16 70 Q4 42 24 36 Q34 50 36 70 Z" fill="#7a4d22" stroke="#15225a" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M104 70 Q116 42 96 36 Q86 50 84 70 Z" fill="#7a4d22" stroke="#15225a" stroke-width="3" stroke-linejoin="round"/>
+      <!-- body -->
+      <ellipse cx="60" cy="74" rx="34" ry="28" fill="#a87b4a" stroke="#15225a" stroke-width="3"/>
+      <!-- chest white -->
+      <path d="M40 74 Q60 95 80 74 Q72 95 60 100 Q48 95 40 74 Z" fill="#fff" stroke="#15225a" stroke-width="2.5"/>
+      <!-- head white -->
+      <circle cx="60" cy="42" r="24" fill="#fff" stroke="#15225a" stroke-width="3"/>
+      <!-- beak (gold) -->
+      <path d="M60 48 L52 58 L60 56 Z" fill="#e6b94d" stroke="#15225a" stroke-width="2"/>
+      <path d="M60 48 L68 58 L60 56 Z" fill="#e6b94d" stroke="#15225a" stroke-width="2"/>
+      <!-- eyes -->
+      <circle cx="50" cy="38" r="3.2" fill="#15225a"/>
+      <circle cx="70" cy="38" r="3.2" fill="#15225a"/>
+      <circle cx="51.2" cy="36.8" r="1" fill="#fff"/>
+      <circle cx="71.2" cy="36.8" r="1" fill="#fff"/>
+      <!-- brow tufts -->
+      <path d="M44 32 Q47 28 51 32" fill="none" stroke="#15225a" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M76 32 Q73 28 69 32" fill="none" stroke="#15225a" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- gold star on chest -->
+      <polygon points="60,80 62.4,85 67.6,85 63.4,88 65.2,93 60,90 54.8,93 56.6,88 52.4,85 57.6,85" fill="#e6b94d" stroke="#15225a" stroke-width="1.5" stroke-linejoin="round"/>
+    </symbol>
+    <!-- Big seal (used on the "promise" art) -->
+    <symbol id="i-eagle-seal" viewBox="0 0 100 100">
+      <!-- shield -->
+      <path d="M30 35 L70 35 L70 55 Q70 70 50 80 Q30 70 30 55 Z" fill="#fff" stroke="#15225a" stroke-width="3"/>
+      <!-- shield stripes -->
+      <line x1="36" y1="55" x2="64" y2="55" stroke="#c8262e" stroke-width="3"/>
+      <line x1="38" y1="62" x2="62" y2="62" stroke="#c8262e" stroke-width="3"/>
+      <line x1="42" y1="69" x2="58" y2="69" stroke="#c8262e" stroke-width="3"/>
+      <!-- shield top blue field -->
+      <rect x="30" y="35" width="40" height="12" fill="#2952b3" stroke="#15225a" stroke-width="3"/>
+      <!-- 5 stars in field -->
+      <circle cx="36" cy="41" r="1.2" fill="#fff"/>
+      <circle cx="44" cy="41" r="1.2" fill="#fff"/>
+      <circle cx="50" cy="41" r="1.2" fill="#fff"/>
+      <circle cx="56" cy="41" r="1.2" fill="#fff"/>
+      <circle cx="64" cy="41" r="1.2" fill="#fff"/>
+      <!-- laurel branches -->
+      <path d="M22 50 Q15 45 18 35" fill="none" stroke="#5cc46a" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="20" cy="42" rx="3" ry="2" fill="#5cc46a" transform="rotate(-30 20 42)"/>
+      <ellipse cx="17" cy="38" rx="3" ry="2" fill="#5cc46a" transform="rotate(-30 17 38)"/>
+      <path d="M78 50 Q85 45 82 35" fill="none" stroke="#5cc46a" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="80" cy="42" rx="3" ry="2" fill="#5cc46a" transform="rotate(30 80 42)"/>
+      <ellipse cx="83" cy="38" rx="3" ry="2" fill="#5cc46a" transform="rotate(30 83 38)"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <polyline points="12,7 12,12 16,14"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="seal-logo"><svg class="ic"><use href="#i-star"/></svg></span>
+      <span class="name-stack">
+        <span class="top">School Civics</span>
+      </span>
+    </a>
+    <div class="nav-links">
+      <a href="#lessons">Lessons</a>
+      <a href="#topics">Topics</a>
+      <a href="#how">How it works</a>
+      <a href="#teachers">For teachers</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn" href="#">Sign in</a>
+      <a class="btn btn-primary" href="#lessons">Start a lesson <svg class="ic"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="star-strip">
+        <svg class="ic"><use href="#i-star"/></svg>
+        <svg class="ic gold"><use href="#i-star"/></svg>
+        <svg class="ic"><use href="#i-star"/></svg>
+        <span>Civics for every classroom</span>
+        <svg class="ic"><use href="#i-star"/></svg>
+        <svg class="ic gold"><use href="#i-star"/></svg>
+        <svg class="ic"><use href="#i-star"/></svg>
+      </span>
+      <h1>
+        Civics class<br/>
+        kids actually<br/>
+        <em>love</em>.
+      </h1>
+      <p class="lead">
+        Story-driven lessons, hands-on activities, and big questions about how
+        government works — built for curious kids and busy teachers.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="lesson-1.html"><svg class="ic"><use href="#i-play"/></svg> Try Lesson 1 — free</a>
+        <a class="btn btn-gold" href="#teachers">For teachers</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">24</div><div class="lbl">Lessons</div></div>
+        <div class="stat"><div class="num">6</div><div class="lbl">Topics</div></div>
+        <div class="stat"><div class="num">100%</div><div class="lbl">No prep</div></div>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <div class="card-stack">
+        <div class="float-card fc-1">
+          <span class="badge">Lesson 1</span>
+          <div class="icon-circle ic-red"><svg class="ic"><use href="#i-scales"/></svg></div>
+          <h4>Three Branches of Government</h4>
+          <p>Why does power get split up — and who keeps watch?</p>
+        </div>
+        <div class="float-card fc-2">
+          <span class="badge" style="background: var(--blue); color: #fff;">Activity</span>
+          <div class="icon-circle ic-blue"><svg class="ic"><use href="#i-capitol"/></svg></div>
+          <h4>Build a tiny Congress</h4>
+          <p>Vote on a class rule the way real lawmakers do.</p>
+        </div>
+        <div class="float-card fc-3">
+          <span class="badge" style="background: var(--gold); color: var(--navy);">Quiz</span>
+          <div class="icon-circle ic-gold"><svg class="ic"><use href="#i-bell"/></svg></div>
+          <h4>What did you learn?</h4>
+          <p>10 questions to wrap up the lesson.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ WHY CIVICS ============ -->
+<section class="why-civics">
+  <div class="why-inner">
+    <h2>Why civics?</h2>
+    <p class="why-lead">
+      Because how government works isn't just for grown-ups, and the rules behind the
+      rules don't have to be intimidating. We turn civics into stories, questions, and
+      hands-on activities kids actually want to talk about.
+    </p>
+  </div>
+</section>
+
+<!-- ============ TOPICS ============ -->
+<section class="topics" id="topics">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-clean">Topics</span>
+      <h2>Big questions, kid-sized answers</h2>
+      <p>Eight core topics that build up an understanding of how the United States works — one curiosity at a time.</p>
+    </div>
+    <div class="topic-grid">
+      <div class="topic">
+        <div class="icon-circle ic-red"><svg class="ic"><use href="#i-capitol"/></svg></div>
+        <h3>How Government Works</h3>
+        <p>Branches, balances, and the people who run the show.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle ic-blue"><svg class="ic"><use href="#i-scroll"/></svg></div>
+        <h3>The Constitution</h3>
+        <p>What's actually in it, and why it still matters today.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle ic-gold"><svg class="ic"><use href="#i-ballot"/></svg></div>
+        <h3>Voting &amp; Elections</h3>
+        <p>How a ballot becomes a president — and a school board.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle" style="background: var(--teal); color: #fff;"><svg class="ic"><use href="#i-shield"/></svg></div>
+        <h3>Rights &amp; Freedoms</h3>
+        <p>The Bill of Rights, explained for the playground.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle" style="background: var(--pink); color: #fff;"><svg class="ic"><use href="#i-gavel"/></svg></div>
+        <h3>Laws &amp; the Courts</h3>
+        <p>Where rules come from, and how judges decide.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle" style="background: var(--green); color: #fff;"><svg class="ic"><use href="#i-people"/></svg></div>
+        <h3>Being a Citizen</h3>
+        <p>Community, kindness, and showing up for each other.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle" style="background: var(--blue-deep); color: var(--gold);"><svg class="ic"><use href="#i-bell"/></svg></div>
+        <h3>American Symbols</h3>
+        <p>The flag, the eagle, the bell — and what each one stands for.</p>
+      </div>
+      <div class="topic">
+        <div class="icon-circle" style="background: var(--gold-deep); color: #fff;"><svg class="ic"><use href="#i-courthouse"/></svg></div>
+        <h3>State &amp; Local</h3>
+        <p>Not all government is in D.C. Meet the leaders next door.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED LESSONS ============ -->
+<section class="lessons-section" id="lessons">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-clean">Featured lessons</span>
+      <h2>Start with a question, end with an "aha!"</h2>
+      <p>Each lesson is a 30–45 minute adventure: a story, an activity, and a quick quiz.</p>
+    </div>
+
+    <div class="lesson-grid">
+
+      <a href="lesson-1.html" class="lesson-card">
+        <div class="lesson-thumb thumb-branches">
+          <div class="pillar p1"></div>
+          <div class="pillar p2"></div>
+          <div class="pillar p3"></div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill featured"><svg class="ic"><use href="#i-star"/></svg> Featured</span>
+            <span>Lesson 1</span>
+            <span>• 35 min</span>
+          </div>
+          <h3>The Three Branches of Government</h3>
+          <p>Why split power into three? Kids meet Legislative, Executive, and Judicial — and find out who keeps each one in check.</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 3–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </a>
+
+      <div class="lesson-card">
+        <div class="lesson-thumb thumb-constitution">
+          <div class="scroll-art">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line short"></div>
+            <div class="line"></div>
+            <div class="line short"></div>
+            <div class="seal-circ"></div>
+          </div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill">New</span>
+            <span>Lesson 2</span>
+            <span>• 40 min</span>
+          </div>
+          <h3>What is the Constitution?</h3>
+          <p>One famous document, lots of big ideas. Kids investigate the rules behind the rules.</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 4–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-thumb thumb-vote">
+          <div class="ballot-box">
+            <div class="ballot-paper"><svg class="ic"><use href="#i-check"/></svg></div>
+          </div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill">Lesson 3</span>
+            <span>• 30 min</span>
+          </div>
+          <h3>How Does a Vote Work?</h3>
+          <p>From classroom elections to the Electoral College — what happens when we all decide together?</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 3–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-thumb thumb-rights">
+          <div class="torch"><div class="flame"></div></div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill">Lesson 4</span>
+            <span>• 35 min</span>
+          </div>
+          <h3>Your Rights, Explained</h3>
+          <p>The Bill of Rights through everyday playground stories — speech, fairness, and being heard.</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 4–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-thumb thumb-courts">
+          <div class="gavel-art"><div class="gavel-block"></div></div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill">Lesson 5</span>
+            <span>• 40 min</span>
+          </div>
+          <h3>Inside the Supreme Court</h3>
+          <p>What's a case? What's a ruling? Kids step inside the country's highest court.</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 5–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <div class="lesson-thumb thumb-citizen">
+          <div class="person"></div>
+          <div class="play"><div class="play-btn"><svg class="ic"><use href="#i-play"/></svg></div></div>
+        </div>
+        <div class="lesson-body">
+          <div class="lesson-meta">
+            <span class="pill">Lesson 6</span>
+            <span>• 30 min</span>
+          </div>
+          <h3>What Makes a Good Citizen?</h3>
+          <p>Beyond voting — small actions that make a community work.</p>
+          <div class="lesson-foot">
+            <span class="small">Grades 3–6</span>
+            <span class="arrow"><svg class="ic"><use href="#i-arrow"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow-clean" style="color: var(--gold);">How it works</span>
+      <h2>Three steps. Zero prep.</h2>
+      <p>Open a lesson, press play, and follow along together. Everything you need is built in.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Pick a lesson</h3>
+        <p>Browse by topic or grade. Each lesson has a short video story and a printable activity.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Watch &amp; wonder</h3>
+        <p>Kids meet a question — "Why are there three branches?" — and unpack it through visuals and short clips.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Try it out</h3>
+        <p>A hands-on activity and quick quiz lock in the big idea. Done in under an hour.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEACHER CTA ============ -->
+<section class="teacher" id="teachers">
+  <div class="teacher-inner">
+    <div>
+      <span class="eyebrow-clean">For teachers</span>
+      <h2>Built for the way you actually teach</h2>
+      <p>Every lesson is classroom-ready: standards-aligned, printable, and pause-friendly. We do the prep so you can do the teaching.</p>
+      <ul class="check-list">
+        <li><span class="check-mark"><svg class="ic"><use href="#i-check"/></svg></span> Aligned to NCSS &amp; state civics standards</li>
+        <li><span class="check-mark"><svg class="ic"><use href="#i-check"/></svg></span> Printable worksheets and answer keys</li>
+        <li><span class="check-mark"><svg class="ic"><use href="#i-check"/></svg></span> Discussion prompts and extension activities</li>
+        <li><span class="check-mark"><svg class="ic"><use href="#i-check"/></svg></span> Works on Chromebooks, tablets, and your projector</li>
+      </ul>
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a class="btn btn-primary" href="#">Create a free teacher account</a>
+        <a class="btn" href="lesson-1.html">Preview a lesson</a>
+      </div>
+    </div>
+    <div class="teacher-art">
+      <div class="quote-mark">&ldquo;</div>
+      <div class="quote-text">Lessons my third-graders ask to repeat. The activities make the ideas stick.</div>
+      <div class="quote-attr">— Ms. R., 3rd-grade teacher</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="foot-inner">
+    <div>
+      <div class="foot-logo">
+        <span class="seal-logo" style="box-shadow: none;"><svg class="ic"><use href="#i-star"/></svg></span>
+        School Civics
+      </div>
+      <p style="font-size: 14px; max-width: 320px;">
+        Hands-on civics lessons that make government make sense — for grades 3 through 6.
+      </p>
+    </div>
+    <div>
+      <h4>Lessons</h4>
+      <ul>
+        <li><a href="lesson-1.html">Three Branches</a></li>
+        <li><a href="#">The Constitution</a></li>
+        <li><a href="#">Voting</a></li>
+        <li><a href="#">Bill of Rights</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Teachers</h4>
+      <ul>
+        <li><a href="#">Standards alignment</a></li>
+        <li><a href="#">Printables</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Help center</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Office</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© 2026 School Civics · Made for curious classrooms.</span>
+    <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
