@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logo Background Remover</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #181b24;
+    --panel-2: #20242f;
+    --ink: #e8ebf2;
+    --ink-muted: #8a92a4;
+    --border: rgba(255,255,255,0.08);
+    --accent: #6aa9ff;
+    --accent-deep: #4f8ee8;
+    --good: #5cc46a;
+    --danger: #ff6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, system-ui, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 28px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header p { font-size: 13px; color: var(--ink-muted); margin-top: 4px; }
+  main {
+    padding: 28px 32px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 28px;
+  }
+  @media (max-width: 800px) {
+    main { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+
+  /* Drop zone */
+  #dropzone {
+    background: var(--panel);
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    min-height: 380px;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    color: var(--ink-muted);
+    transition: border-color .15s, background .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  #dropzone.dragover { border-color: var(--accent); background: rgba(106,169,255,0.06); }
+  #dropzone .placeholder { padding: 60px 30px; }
+  #dropzone .placeholder svg {
+    width: 60px; height: 60px; margin-bottom: 16px; opacity: .55;
+  }
+  #dropzone .placeholder h3 { font-size: 18px; color: var(--ink); margin-bottom: 6px; font-weight: 500; }
+  #dropzone .placeholder p { font-size: 13px; }
+
+  /* Preview canvas — checkerboard background to show transparency */
+  #preview {
+    display: none;
+    max-width: 100%;
+    max-height: 480px;
+    background-image:
+      linear-gradient(45deg, #2a2f3a 25%, transparent 25%),
+      linear-gradient(-45deg, #2a2f3a 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2a2f3a 75%),
+      linear-gradient(-45deg, transparent 75%, #2a2f3a 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    border-radius: 8px;
+  }
+
+  .controls h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .field label .val {
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .field input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+  .field .hint {
+    font-size: 11px;
+    color: var(--ink-muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .seg {
+    display: flex;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 3px;
+  }
+  .seg button {
+    flex: 1;
+    padding: 8px 10px;
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background .12s, color .12s;
+  }
+  .seg button:hover { color: var(--ink); }
+  .seg button.on { background: var(--accent); color: white; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel-2);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .15s;
+    width: 100%;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); color: white; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn:disabled:hover { border-color: var(--border); color: var(--ink); }
+
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; gap: 8px; }
+
+  .meta {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .meta strong { color: var(--ink); font-weight: 600; }
+
+  input[type="file"] { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Logo Background Remover</h1>
+  <p>Drop in a logo, strip the background, download a transparent PNG. Works fully offline in your browser — nothing is uploaded.</p>
+</header>
+
+<main>
+  <div id="dropzone">
+    <div class="placeholder" id="placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21,15 16,10 5,21"/>
+      </svg>
+      <h3>Drop your logo here</h3>
+      <p>or click to choose a file (.png, .jpg, .webp)</p>
+    </div>
+    <canvas id="preview"></canvas>
+  </div>
+  <input type="file" id="file-input" accept="image/*">
+
+  <div class="panel controls">
+    <h2>Settings</h2>
+
+    <div class="field">
+      <label>Mode <span class="val" id="mode-val">Remove white</span></label>
+      <div class="seg" id="mode-seg">
+        <button data-mode="white" class="on">Remove white</button>
+        <button data-mode="dark">Remove dark</button>
+        <button data-mode="auto">Auto color</button>
+      </div>
+      <div class="hint">"Remove white" works best for solid logos on a light background (your School Civics logo). "Remove dark" inverts that. "Auto" samples the corners and removes that color.</div>
+    </div>
+
+    <div class="field">
+      <label>Threshold <span class="val" id="thresh-val">230</span></label>
+      <input type="range" id="thresh" min="100" max="255" value="230">
+      <div class="hint">Pixels above this brightness become transparent. Lower = more aggressive.</div>
+    </div>
+
+    <div class="field">
+      <label>Edge softness <span class="val" id="soft-val">40</span></label>
+      <input type="range" id="soft" min="0" max="120" value="40">
+      <div class="hint">Range below the threshold that fades smoothly to opaque. Higher = smoother edges.</div>
+    </div>
+
+    <div class="field">
+      <label>Force foreground color <span class="val" id="force-val">Off</span></label>
+      <div class="seg" id="force-seg">
+        <button data-force="none" class="on">Keep original</button>
+        <button data-force="black">Black</button>
+        <button data-force="navy">Navy</button>
+      </div>
+      <div class="hint">Optional — recolor every visible pixel. Useful for a logo you want pure black or your brand color.</div>
+    </div>
+
+    <div class="stack">
+      <button class="btn" id="reset-btn" disabled>Reset adjustments</button>
+      <button class="btn btn-primary" id="download-btn" disabled>↓ Download transparent PNG</button>
+    </div>
+
+    <div class="meta">
+      <div><strong>Tip for your School Civics logo:</strong> the default settings (Remove white, threshold ~230, softness 40) should give a clean transparent background. If you see white halos around the lightbulb, lower the threshold to ~210.</div>
+    </div>
+  </div>
+</main>
+
+<script>
+const dropzone = document.getElementById('dropzone');
+const placeholder = document.getElementById('placeholder');
+const fileInput = document.getElementById('file-input');
+const preview = document.getElementById('preview');
+const ctx = preview.getContext('2d');
+const downloadBtn = document.getElementById('download-btn');
+const resetBtn = document.getElementById('reset-btn');
+
+let originalImage = null; // ImageData of the source
+let sourceFilename = 'logo';
+let mode = 'white';
+let force = 'none';
+let threshold = 230;
+let softness = 40;
+
+// ── Drag & drop ──
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault(); dropzone.classList.add('dragover');
+});
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files[0]) loadFile(e.target.files[0]);
+});
+
+// Paste from clipboard
+document.addEventListener('paste', (e) => {
+  for (const item of e.clipboardData.items) {
+    if (item.type.startsWith('image/')) {
+      loadFile(item.getAsFile());
+      break;
+    }
+  }
+});
+
+function loadFile(file) {
+  if (!file.type.startsWith('image/')) { alert('Please drop an image file.'); return; }
+  sourceFilename = (file.name || 'logo').replace(/\.[^.]+$/, '');
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      // Draw to canvas at native resolution
+      preview.width = img.width;
+      preview.height = img.height;
+      ctx.clearRect(0, 0, img.width, img.height);
+      ctx.drawImage(img, 0, 0);
+      originalImage = ctx.getImageData(0, 0, img.width, img.height);
+      placeholder.style.display = 'none';
+      preview.style.display = 'block';
+      downloadBtn.disabled = false;
+      resetBtn.disabled = false;
+      apply();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Settings UI wiring ──
+document.querySelectorAll('#mode-seg button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#mode-seg button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    mode = b.dataset.mode;
+    const labels = { white: 'Remove white', dark: 'Remove dark', auto: 'Auto color' };
+    document.getElementById('mode-val').textContent = labels[mode];
+    apply();
+  });
+});
+document.querySelectorAll('#force-seg button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#force-seg button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    force = b.dataset.force;
+    const labels = { none: 'Off', black: 'Pure black', navy: 'Navy #15225a' };
+    document.getElementById('force-val').textContent = labels[force];
+    apply();
+  });
+});
+const threshEl = document.getElementById('thresh');
+const softEl = document.getElementById('soft');
+threshEl.addEventListener('input', () => {
+  threshold = parseInt(threshEl.value);
+  document.getElementById('thresh-val').textContent = threshold;
+  apply();
+});
+softEl.addEventListener('input', () => {
+  softness = parseInt(softEl.value);
+  document.getElementById('soft-val').textContent = softness;
+  apply();
+});
+
+resetBtn.addEventListener('click', () => {
+  threshold = 230; softness = 40; mode = 'white'; force = 'none';
+  threshEl.value = 230; softEl.value = 40;
+  document.getElementById('thresh-val').textContent = 230;
+  document.getElementById('soft-val').textContent = 40;
+  document.querySelectorAll('#mode-seg button').forEach(x => x.classList.toggle('on', x.dataset.mode === 'white'));
+  document.querySelectorAll('#force-seg button').forEach(x => x.classList.toggle('on', x.dataset.force === 'none'));
+  document.getElementById('mode-val').textContent = 'Remove white';
+  document.getElementById('force-val').textContent = 'Off';
+  apply();
+});
+
+// ── The actual algorithm ──
+function apply() {
+  if (!originalImage) return;
+  const w = originalImage.width, h = originalImage.height;
+  const out = new ImageData(new Uint8ClampedArray(originalImage.data), w, h);
+  const d = out.data;
+
+  // For "auto" mode, sample corners to get the background color
+  let bgR = 255, bgG = 255, bgB = 255;
+  if (mode === 'auto') {
+    const corners = [
+      [0,0], [w-1,0], [0,h-1], [w-1,h-1]
+    ];
+    let r=0, g=0, b=0;
+    corners.forEach(([cx, cy]) => {
+      const i = (cy * w + cx) * 4;
+      r += d[i]; g += d[i+1]; b += d[i+2];
+    });
+    bgR = r/4; bgG = g/4; bgB = b/4;
+  }
+
+  // Force-color settings
+  let forceColor = null;
+  if (force === 'black') forceColor = [0, 0, 0];
+  else if (force === 'navy') forceColor = [0x15, 0x22, 0x5a];
+
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], g = d[i+1], b = d[i+2];
+    let alpha = 255;
+
+    if (mode === 'white') {
+      // Brightness-based: bright pixels become transparent
+      const brightness = (r + g + b) / 3;
+      if (brightness >= threshold) {
+        alpha = 0;
+      } else if (brightness >= threshold - softness) {
+        // Smooth edge
+        alpha = Math.round(255 * (threshold - brightness) / softness);
+      }
+    } else if (mode === 'dark') {
+      // Darkness-based: dark pixels become transparent
+      const brightness = (r + g + b) / 3;
+      const inv = 255 - brightness;
+      const invThresh = 255 - threshold;
+      if (inv >= invThresh) {
+        alpha = 0;
+      } else if (inv >= invThresh - softness) {
+        alpha = Math.round(255 * (invThresh - inv) / softness);
+      }
+    } else if (mode === 'auto') {
+      // Color-distance based: pixels close to sampled corner color become transparent
+      const dist = Math.sqrt(
+        (r - bgR) * (r - bgR) +
+        (g - bgG) * (g - bgG) +
+        (b - bgB) * (b - bgB)
+      );
+      // Map distance to alpha; threshold here is "how close = remove"
+      const removeRadius = (255 - threshold) * 1.5; // higher threshold = less aggressive
+      const softRadius = softness * 1.5;
+      if (dist <= removeRadius) {
+        alpha = 0;
+      } else if (dist <= removeRadius + softRadius) {
+        alpha = Math.round(255 * (dist - removeRadius) / softRadius);
+      }
+    }
+
+    if (forceColor && alpha > 0) {
+      d[i] = forceColor[0];
+      d[i+1] = forceColor[1];
+      d[i+2] = forceColor[2];
+    }
+    d[i+3] = alpha;
+  }
+
+  ctx.putImageData(out, 0, 0);
+}
+
+// ── Download ──
+downloadBtn.addEventListener('click', () => {
+  preview.toBlob((blob) => {
+    const a = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = sourceFilename + '-transparent.png';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+});
+</script>
+</body>
+</html>

@@ -2154,55 +2154,49 @@
 // can read AND write — perfect for a shared multi-user app.
 //
 // HOW IT WORKS:
-//  • The first time the page loads (anywhere), it creates a new bin and
-//    stores the ID in localStorage.
-//  • To make data SHARED across all visitors of your site, copy the bin
-//    ID that prints in the console after first save and paste it into
-//    NPOINT_ID below. Then redeploy.
-//  • All future loads on every device read & write the same shared bin.
+//  • CLOUD_BIN_ID is a permanent JSON bin shared by every device that
+//    loads this HTML. It's hardcoded into the script so a brand-new
+//    device — even one that's never opened the app before — pulls the
+//    same tasks, calendar, members, etc. on first load.
+//  • This ID is the sync token: keep it private — anyone with it can
+//    read/write the bin. To rotate, create a new bin at jsonblob.com
+//    and replace the value below.
 // ═══════════════════════════════════════════════════════════════
-const NPOINT_ID = ''; // ← paste your bin ID here after first auto-creation
+const CLOUD_BIN_ID = '019dfa5e-ec23-79a1-87d7-2eafc8252bda';
+const CLOUD_BASE   = 'https://jsonblob.com/api/jsonBlob';
+// Legacy (kept only so older per-device NPoint setups don't crash on first load)
 const NPOINT_KEY_LOCAL = 'sc_npoint_id';
 
-async function cloudCreate(data) {
-  try {
-    const r = await fetch('https://api.npoint.io/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!r.ok) return null;
-    const j = await r.json();
-    if (j && j.id) {
-      localStorage.setItem(NPOINT_KEY_LOCAL, j.id);
-      console.log('%c✓ Cross-user sync bin created.', 'color:#7B9E87;font-weight:bold;');
-      console.log('%cTo make sync GLOBAL across all users, set NPOINT_ID in staff.html to: ' + j.id, 'color:#C4703A;');
-      return j.id;
-    }
-  } catch(e) { console.warn('Cloud create failed', e); }
-  return null;
-}
-
+// Debounced writer — many rapid edits should collapse into a single PUT.
+let _cloudSaveTimer = null;
+let _cloudSaveLatest = null;
 async function cloudSave(data) {
-  let id = NPOINT_ID || localStorage.getItem(NPOINT_KEY_LOCAL);
-  if (!id) { await cloudCreate(data); return; }
-  try {
-    await fetch(`https://api.npoint.io/${id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  } catch(e) { console.warn('Cloud save failed', e); }
+  _cloudSaveLatest = data;
+  if (_cloudSaveTimer) return;
+  _cloudSaveTimer = setTimeout(async () => {
+    const payload = _cloudSaveLatest;
+    _cloudSaveTimer = null;
+    _cloudSaveLatest = null;
+    try {
+      await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) { console.warn('Cloud save failed', e); }
+  }, 400);
 }
 
 async function cloudLoad() {
-  const id = NPOINT_ID || localStorage.getItem(NPOINT_KEY_LOCAL);
-  if (!id) return null;
+  if (!CLOUD_BIN_ID) return null;
   try {
-    const r = await fetch(`https://api.npoint.io/${id}`, { headers: { 'Accept': 'application/json' } });
+    // Cache-bust query so we always pull the latest copy on a fresh device
+    const r = await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}?t=${Date.now()}`, {
+      headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' }
+    });
     if (!r.ok) return null;
     return await r.json();
-  } catch(e) { return null; }
+  } catch(e) { console.warn('Cloud load failed', e); return null; }
 }
 
 // ─── USERS ───
@@ -2398,7 +2392,9 @@ async function save() {
     localStorage.setItem('sc_notes',         JSON.stringify(notesByUser));
     localStorage.setItem('sc_settings',      JSON.stringify(settings));
   } catch(e) {}
-  await cloudSave({ todos, events, applicants, roles, announcements, notesByUser, settings, updatedAt: Date.now() });
+  const stamp = Date.now();
+  _lastUpdatedAt = stamp; // so the polling loop doesn't re-pull what we just wrote
+  await cloudSave({ todos, events, applicants, roles, announcements, notesByUser, settings, updatedAt: stamp });
 }
 async function loadData() {
   try {
@@ -2419,6 +2415,7 @@ async function loadData() {
     announcements = cloud.announcements || [];
     notesByUser   = cloud.notesByUser   || {};
     settings      = cloud.settings      || { siteLink: '' };
+    _lastUpdatedAt = cloud.updatedAt || 0;
   }
   // Apply persisted founder profile (display name + avatar) to the in-memory USERS map
   if (settings && settings.founderProfile && settings.founderProfile.name) {
@@ -2511,7 +2508,57 @@ function renderAll() {
     renderAll();
   }
   showLoadingOverlay(false);
+  startCloudPolling();
 })();
+
+// Poll the cloud bin every 20s while the user is active so changes from
+// other devices show up automatically without requiring a refresh.
+let _cloudPollTimer = null;
+let _lastUpdatedAt = 0;
+function startCloudPolling() {
+  if (_cloudPollTimer) return;
+  _cloudPollTimer = setInterval(async () => {
+    if (document.hidden) return; // don't poll while tab is in the background
+    if (_cloudSaveTimer || _cloudSaveLatest) return; // wait until our own writes flush
+    const cloud = await cloudLoad();
+    if (!cloud) return;
+    const cloudUpdated = cloud.updatedAt || 0;
+    if (cloudUpdated && cloudUpdated > _lastUpdatedAt) {
+      _lastUpdatedAt   = cloudUpdated;
+      todos            = cloud.todos         || [];
+      events           = cloud.events        || {};
+      applicants       = cloud.applicants    || [];
+      roles            = cloud.roles         || [];
+      announcements    = cloud.announcements || [];
+      notesByUser      = cloud.notesByUser   || {};
+      settings         = cloud.settings      || { siteLink: '' };
+      // Mirror to localStorage so a refresh shows the same state instantly
+      try {
+        localStorage.setItem('sc_todos',         JSON.stringify(todos));
+        localStorage.setItem('sc_events',        JSON.stringify(events));
+        localStorage.setItem('sc_applicants',    JSON.stringify(applicants));
+        localStorage.setItem('sc_roles',         JSON.stringify(roles));
+        localStorage.setItem('sc_announcements', JSON.stringify(announcements));
+        localStorage.setItem('sc_notes',         JSON.stringify(notesByUser));
+        localStorage.setItem('sc_settings',      JSON.stringify(settings));
+      } catch(e) {}
+      if (currentUser) {
+        try { renderAll(); } catch(e) { console.warn('renderAll after poll', e); }
+      }
+    }
+  }, 20000);
+}
+
+// Make sure the last unsaved edit is flushed when the tab is closed
+window.addEventListener('beforeunload', () => {
+  if (_cloudSaveLatest && CLOUD_BIN_ID) {
+    try {
+      // Use sendBeacon for guaranteed-on-unload delivery
+      const blob = new Blob([JSON.stringify(_cloudSaveLatest)], { type: 'application/json' });
+      navigator.sendBeacon(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, blob);
+    } catch(e) {}
+  }
+});
 function showLoadingOverlay(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
 
 // ─── PAGE TOGGLES ───
