@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Force fresh load on every visit so cross-device sync uses the latest CLOUD_BIN_ID -->
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>School Civics</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -117,6 +121,22 @@
 
   .nav-spacer { margin-left: auto; }
   .user-pill { display: flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; }
+
+  /* Sync status badge — shows the bin ID prefix + last-sync time so two devices can confirm they're on the same bin */
+  .sync-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; margin-right: 4px;
+    background: var(--cream); border: 1px solid var(--border); border-radius: 999px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 11px; font-weight: 600; color: var(--ink-muted);
+    cursor: pointer; transition: all .15s;
+    line-height: 1;
+  }
+  .sync-badge .ic { width: 13px; height: 13px; }
+  .sync-badge:hover { background: var(--accent-pale); color: var(--accent); border-color: var(--accent); }
+  .sync-badge.ok    { background: var(--sage-pale); color: var(--sage); border-color: var(--sage); }
+  .sync-badge.busy  { background: var(--accent-pale); color: var(--accent); border-color: var(--accent); }
+  .sync-badge.err   { background: #fce6e6; color: var(--danger); border-color: var(--danger); }
   .user-avatar {
     width: 30px; height: 30px; border-radius: 50%;
     background: var(--accent-pale); color: var(--accent);
@@ -1488,6 +1508,10 @@
         <button class="nav-tab" id="tab-hiring" onclick="switchTab('hiring', this)" style="display:none;"><svg class="ic"><use href="#i-id"/></svg> Hiring</button>
       </div>
       <div class="nav-spacer"></div>
+      <button class="sync-badge" id="sync-badge" onclick="forceSyncNow()" title="Click to sync now">
+        <svg class="ic"><use href="#i-cloud"/></svg>
+        <span id="sync-badge-text">Syncing…</span>
+      </button>
       <div class="user-pill" onclick="switchTab('profile', null)" style="cursor:pointer;" title="Open your profile">
         <div class="user-avatar" id="nav-avatar"></div>
         <span class="user-name" id="nav-name"></span>
@@ -2172,18 +2196,24 @@ let _cloudSaveTimer = null;
 let _cloudSaveLatest = null;
 async function cloudSave(data) {
   _cloudSaveLatest = data;
+  setSyncBadge('busy', 'Saving…');
   if (_cloudSaveTimer) return;
   _cloudSaveTimer = setTimeout(async () => {
     const payload = _cloudSaveLatest;
     _cloudSaveTimer = null;
     _cloudSaveLatest = null;
     try {
-      await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, {
+      const r = await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload)
       });
-    } catch(e) { console.warn('Cloud save failed', e); }
+      if (r.ok) setSyncBadge('ok', `Synced · bin ${CLOUD_BIN_ID.slice(0,8)}`);
+      else setSyncBadge('err', `Save failed (${r.status})`);
+    } catch(e) {
+      console.warn('Cloud save failed', e);
+      setSyncBadge('err', 'Offline — will retry');
+    }
   }, 400);
 }
 
@@ -2194,16 +2224,53 @@ async function cloudLoad() {
     const r = await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}?t=${Date.now()}`, {
       headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' }
     });
-    if (!r.ok) return null;
+    if (!r.ok) { setSyncBadge('err', `Load failed (${r.status})`); return null; }
     return await r.json();
-  } catch(e) { console.warn('Cloud load failed', e); return null; }
+  } catch(e) { console.warn('Cloud load failed', e); setSyncBadge('err', 'Offline'); return null; }
+}
+
+// ─── SYNC BADGE ───
+// Renders a small pill in the top nav so two devices can verify they're
+// pointing at the same bin and see when the last sync happened.
+function setSyncBadge(state, text) {
+  const el = document.getElementById('sync-badge');
+  const t  = document.getElementById('sync-badge-text');
+  if (!el || !t) return;
+  el.classList.remove('ok','busy','err');
+  if (state) el.classList.add(state);
+  t.textContent = text;
+}
+async function forceSyncNow() {
+  setSyncBadge('busy', 'Pulling latest…');
+  const cloud = await cloudLoad();
+  if (!cloud) { setSyncBadge('err', 'Sync failed'); return; }
+  todos         = cloud.todos         || [];
+  events        = cloud.events        || {};
+  applicants    = cloud.applicants    || [];
+  roles         = cloud.roles         || [];
+  announcements = cloud.announcements || [];
+  notesByUser   = cloud.notesByUser   || {};
+  settings      = cloud.settings      || { siteLink: '' };
+  _lastUpdatedAt = cloud.updatedAt || 0;
+  try {
+    localStorage.setItem('sc_todos',         JSON.stringify(todos));
+    localStorage.setItem('sc_events',        JSON.stringify(events));
+    localStorage.setItem('sc_applicants',    JSON.stringify(applicants));
+    localStorage.setItem('sc_roles',         JSON.stringify(roles));
+    localStorage.setItem('sc_announcements', JSON.stringify(announcements));
+    localStorage.setItem('sc_notes',         JSON.stringify(notesByUser));
+    localStorage.setItem('sc_settings',      JSON.stringify(settings));
+  } catch(e) {}
+  if (currentUser) try { renderAll(); } catch(e){}
+  const when = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+  setSyncBadge('ok', `Synced ${when} · bin ${CLOUD_BIN_ID.slice(0,8)}`);
 }
 
 // ─── USERS ───
 // Only the founder is a hardcoded staff user. All other team members come from
 // accepted+consented applicants (managed via Hiring/Members).
 const USERS = {
-  'SC Founder': { pass: 'schoolcivics26', staffId: '2345', role: 'founder', name: 'SC Founder', initials: 'SC' },
+  'SC Founder': { pass: 'schoolcivics2026', staffId: '2345', role: 'founder', name: 'SC Founder', initials: 'SC' },
 };
 // Legacy lookup for any old saved data that references the removed members.
 const LEGACY_NAMES = { naunidh: 'Naunidh Bhushan', varun: 'Varun Krishnaswamy', abhay: 'Abhay Krishnan' };
@@ -2396,7 +2463,23 @@ async function save() {
   _lastUpdatedAt = stamp; // so the polling loop doesn't re-pull what we just wrote
   await cloudSave({ todos, events, applicants, roles, announcements, notesByUser, settings, updatedAt: stamp });
 }
+// Bump this whenever you wipe the cloud bin or want every device to discard its
+// cached localStorage on next load. Devices remember the last DATA_RESET_TAG they
+// saw — when they see a new one, they nuke their local cache and pull fresh.
+const DATA_RESET_TAG = '2026-05-05-reset-1';
 async function loadData() {
+  // If this device hasn't seen the current reset tag, blow away its cached state
+  // so old cloud data (members, tasks, etc.) doesn't get re-uploaded.
+  try {
+    const seen = localStorage.getItem('sc_reset_tag');
+    if (seen !== DATA_RESET_TAG) {
+      ['sc_todos','sc_events','sc_applicants','sc_roles','sc_announcements','sc_notes','sc_settings']
+        .forEach(k => localStorage.removeItem(k));
+      // Also drop any session left over from the old data set
+      localStorage.removeItem('sc_session_v1');
+      localStorage.setItem('sc_reset_tag', DATA_RESET_TAG);
+    }
+  } catch(e) {}
   try {
     todos         = JSON.parse(localStorage.getItem('sc_todos'))         || [];
     events        = JSON.parse(localStorage.getItem('sc_events'))        || {};
