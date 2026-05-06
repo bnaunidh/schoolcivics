@@ -2170,6 +2170,9 @@
   </div>
 </footer>
 
+<!-- Cross-device sync token store — must load BEFORE the inline script below. -->
+<script src="sync.js"></script>
+
 <script>
 // ═══════════════════════════════════════════════════════════════
 // GLOBAL CROSS-USER SYNC via NPoint.io
@@ -2178,17 +2181,14 @@
 // can read AND write — perfect for a shared multi-user app.
 //
 // HOW IT WORKS:
-//  • CLOUD_BIN_ID is a permanent JSON bin shared by every device that
-//    loads this HTML. It's hardcoded into the script so a brand-new
-//    device — even one that's never opened the app before — pulls the
-//    same tasks, calendar, members, etc. on first load.
-//  • This ID is the sync token: keep it private — anyone with it can
-//    read/write the bin. To rotate, create a new bin at jsonblob.com
-//    and replace the value below.
+//  • The shared bin token (and any extras) live in the separate
+//    sync.js file as `CloudSync`. It's loaded BEFORE this script so
+//    `CloudSync.activeToken()` returns the bin ID we read/write.
+//  • To rotate or use a different bin, call `CloudSync.setActiveToken(id)`
+//    from the console (or via the Profile page in the future).
 // ═══════════════════════════════════════════════════════════════
-const CLOUD_BIN_ID = '019dfa5e-ec23-79a1-87d7-2eafc8252bda';
-const CLOUD_BASE   = 'https://jsonblob.com/api/jsonBlob';
-// Legacy (kept only so older per-device NPoint setups don't crash on first load)
+function CLOUD_BIN_ID() { return (window.CloudSync && CloudSync.activeToken()) || ''; }
+// Legacy key (only here so older per-device NPoint setups don't crash on first load)
 const NPOINT_KEY_LOCAL = 'sc_npoint_id';
 
 // Debounced writer — many rapid edits should collapse into a single PUT.
@@ -2202,31 +2202,29 @@ async function cloudSave(data) {
     const payload = _cloudSaveLatest;
     _cloudSaveTimer = null;
     _cloudSaveLatest = null;
-    try {
-      const r = await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      if (r.ok) setSyncBadge('ok', `Synced · bin ${CLOUD_BIN_ID.slice(0,8)}`);
-      else setSyncBadge('err', `Save failed (${r.status})`);
-    } catch(e) {
-      console.warn('Cloud save failed', e);
+    const id = CLOUD_BIN_ID();
+    if (!window.CloudSync) { setSyncBadge('err', 'sync.js not loaded'); return; }
+    const res = await CloudSync.cloudSave(payload, id);
+    if (res.ok) {
+      setSyncBadge('ok', `Synced · bin ${id.slice(0,8)}`);
+      // Re-poll right after a save so we pick up another device's
+      // concurrent write before the next interval fires.
+      setTimeout(pollOnce, 600);
+    } else if (res.error === 'no-token') {
+      setSyncBadge('err', 'No bin selected');
+    } else if (res.status) {
+      setSyncBadge('err', `Save failed (${res.status})`);
+    } else {
       setSyncBadge('err', 'Offline — will retry');
     }
   }, 400);
 }
 
 async function cloudLoad() {
-  if (!CLOUD_BIN_ID) return null;
-  try {
-    // Cache-bust query so we always pull the latest copy on a fresh device
-    const r = await fetch(`${CLOUD_BASE}/${CLOUD_BIN_ID}?t=${Date.now()}`, {
-      headers: { 'Accept': 'application/json', 'Cache-Control': 'no-cache' }
-    });
-    if (!r.ok) { setSyncBadge('err', `Load failed (${r.status})`); return null; }
-    return await r.json();
-  } catch(e) { console.warn('Cloud load failed', e); setSyncBadge('err', 'Offline'); return null; }
+  if (!window.CloudSync) { setSyncBadge('err', 'sync.js not loaded'); return null; }
+  const data = await CloudSync.cloudLoad();
+  if (data === null) setSyncBadge('err', 'Sync read failed');
+  return data;
 }
 
 // ─── SYNC BADGE ───
@@ -2263,7 +2261,7 @@ async function forceSyncNow() {
   } catch(e) {}
   if (currentUser) try { renderAll(); } catch(e){}
   const when = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-  setSyncBadge('ok', `Synced ${when} · bin ${CLOUD_BIN_ID.slice(0,8)}`);
+  setSyncBadge('ok', `Synced ${when} · bin ${CLOUD_BIN_ID().slice(0,8)}`);
 }
 
 // ─── USERS ───
@@ -2594,15 +2592,19 @@ function renderAll() {
   startCloudPolling();
 })();
 
-// Poll the cloud bin every 20s while the user is active so changes from
-// other devices show up automatically without requiring a refresh.
+// Cross-device sync — pull from the bin every few seconds while active, plus
+// instantly when the tab becomes visible / focused, so changes from another
+// device show up almost immediately.
+const POLL_INTERVAL_MS = 8000;
 let _cloudPollTimer = null;
-let _lastUpdatedAt = 0;
-function startCloudPolling() {
-  if (_cloudPollTimer) return;
-  _cloudPollTimer = setInterval(async () => {
-    if (document.hidden) return; // don't poll while tab is in the background
-    if (_cloudSaveTimer || _cloudSaveLatest) return; // wait until our own writes flush
+let _lastUpdatedAt   = 0;
+let _pollInFlight    = false;
+
+async function pollOnce() {
+  if (_pollInFlight) return;
+  if (_cloudSaveTimer || _cloudSaveLatest) return; // wait until our own writes flush
+  _pollInFlight = true;
+  try {
     const cloud = await cloudLoad();
     if (!cloud) return;
     const cloudUpdated = cloud.updatedAt || 0;
@@ -2627,18 +2629,42 @@ function startCloudPolling() {
       } catch(e) {}
       if (currentUser) {
         try { renderAll(); } catch(e) { console.warn('renderAll after poll', e); }
+        const when = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+        setSyncBadge('ok', `Updated ${when} · bin ${CLOUD_BIN_ID().slice(0,8)}`);
       }
     }
-  }, 20000);
+  } finally {
+    _pollInFlight = false;
+  }
+}
+
+function startCloudPolling() {
+  if (_cloudPollTimer) return;
+  _cloudPollTimer = setInterval(() => {
+    if (document.hidden) return;
+    pollOnce();
+  }, POLL_INTERVAL_MS);
+  // Sync immediately when the tab becomes visible again — covers the
+  // "open laptop" / "switch back to this tab" cases.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) pollOnce();
+  });
+  // Also sync on window focus for browsers that don't fire visibilitychange reliably.
+  window.addEventListener('focus', pollOnce);
+  // Cross-tab signal: when *this* device finishes a write, any OTHER tab open
+  // on this device should re-pull immediately too.
+  window.addEventListener('storage', (e) => {
+    if (e && e.key === 'sc_settings') pollOnce();
+  });
 }
 
 // Make sure the last unsaved edit is flushed when the tab is closed
 window.addEventListener('beforeunload', () => {
-  if (_cloudSaveLatest && CLOUD_BIN_ID) {
+  const id = CLOUD_BIN_ID();
+  if (_cloudSaveLatest && id) {
     try {
-      // Use sendBeacon for guaranteed-on-unload delivery
       const blob = new Blob([JSON.stringify(_cloudSaveLatest)], { type: 'application/json' });
-      navigator.sendBeacon(`${CLOUD_BASE}/${CLOUD_BIN_ID}`, blob);
+      navigator.sendBeacon(`https://jsonblob.com/api/jsonBlob/${id}`, blob);
     } catch(e) {}
   }
 });
